@@ -12,7 +12,6 @@ Welcome to the Project Payment! This document provides instructions on using Doc
       git clone git@githubManager:StackManager/app-payment.git &&
       cd app-payment &&
       git rm -r api-payment/service-auth/src/commons &&
-      git rm -r api-payment/app_cron/src/commons &&
       git submodule add git@githubManager:StackManager/app-commons.git api-payment/service-auth/src/commons &&
 
    ```
@@ -24,12 +23,6 @@ Welcome to the Project Payment! This document provides instructions on using Doc
    ```bash
       cd api-payment/service-auth/src/commons &&
       git pull origin main &&
-      cd ../app-payment-commons &&
-      git pull origin main &&
-      cd ../../../app_cron/src/commons &&
-      git pull origin main &&
-      cd ../app-payment-commons &&
-      git pull origin main
    ```
 
 ## 2. Docker Compose Dev
