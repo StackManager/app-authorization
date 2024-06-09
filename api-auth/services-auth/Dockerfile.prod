@@ -1,0 +1,30 @@
+# Etapa de construcción
+FROM node:latest as build
+
+# Establecemos el directorio de trabajo
+WORKDIR /app
+
+# Copiamos el archivo package.json y package-lock.json
+COPY package*.json ./
+
+# Instalamos las dependencias
+RUN npm install
+
+# Copiamos el código fuente de la aplicación
+COPY . .
+
+# Compilamos TypeScript
+RUN npm run build
+
+# Etapa de producción
+FROM node:latest as production
+
+# Establecemos el directorio de trabajo
+WORKDIR /app
+
+# Copiamos los archivos de la etapa de construcción
+COPY --from=build /app/build ./build
+COPY --from=build /app/package*.json ./
+
+# Instalamos las dependencias de producción
+RUN npm install --only=production

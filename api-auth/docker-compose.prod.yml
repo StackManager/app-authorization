@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  production-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - '3001:3000'
+    expose:
+      - '3001'
+    container_name: ts-payment-node-docker
+    env_file: .env
+    depends_on:
+      - mongodb_container_payment
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - MONGO_HOSTNAME=mongodb_container_payment
+      - MONGO_PORT=$MONGO_PORT
+      - MONGO_DB=$MONGO_DB
+    command: npm start -- --host 0.0.0.0
+
+  mongodb_container_payment:
+    image: mongo:latest
+    container_name: db_payment
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    ports:
+      - 27018:27017
+    volumes:
+      - mongodb_data_container_payment:/data/db
+
+volumes:
+  mongodb_data_container_payment:
