@@ -1,12 +1,12 @@
 FROM node:latest as base
 
-WORKDIR /home/node/service-auth
+WORKDIR /home/node/services-auth
 
-COPY ./service-auth/package*.json ./
+COPY ./services-auth/package*.json ./
 
 RUN npm i
 
-COPY ./service-auth/ ./
+COPY ./services-auth/ ./
 
 FROM base as production
 

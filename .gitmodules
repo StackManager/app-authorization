@@ -1,0 +1,3 @@
+[submodule "api-auth/services-auth/src/commons"]
+	path = api-auth/services-auth/src/commons
+	url = git@githubManager:StackManager/app-commons.git

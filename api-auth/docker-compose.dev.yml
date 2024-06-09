@@ -17,11 +17,11 @@ services:
   service_node_auth:
     build:
       context: .
-      dockerfile: ./service-auth/Dockerfile.dev
+      dockerfile: ./services-auth/Dockerfile.dev
       target: base
     volumes:
-      - ./service-auth/src:/home/node/service-auth/src
-      - ./service-auth/nodemon.json:/home/node/service-auth/nodemon.json
+      - ./services-auth/src:/home/node/services-auth/src
+      - ./services-auth/nodemon.json:/home/node/services-auth/nodemon.json
     container_name: service_node_auth
     env_file: .env
     environment:

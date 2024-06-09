@@ -1,9 +1,8 @@
 import {app} from './app'
 import { Connection } from 'mongoose';
-import { DatabaseDataStadistic } from '@Configuration/database/database.stadistic.connect';
-import { DatabaseDataTrasacctional } from '@Configuration/database/database.transactional.connect';
-import { MigrationExecLocal } from '@Migrations/migrations/migration.exec.local.controller';
 import { RouteController } from '@Commons/routes/routes.controller';
+import { DatabaseDataTrasacctional } from '@DB/database.transactional.connect';
+
 
 // Declara dbtc como una variable global
 declare global {
@@ -15,18 +14,18 @@ const start = async () => {
  
   try {
     // Initialize the global variables
-    //const dbtc = new DatabaseDataTrasacctional();
+    const dbtc = new DatabaseDataTrasacctional();
     //const dbte = new DatabaseDataStadistic();
 
     //Initialize the global databases
-    //global.dbtc = await dbtc.get();
+    global.dbtc = await dbtc.get();
     //global.dbec = await dbte.get();
 
     //const migrations = new MigrationExecLocal();
     //await migrations.run();
 
-    //const routeManager = new RouteController(app);
-    //routeManager.run();
+    const routeManager = new RouteController(app);
+    routeManager.run();
 
     // Iniciar el servidor
     app.listen(3000, async() => {

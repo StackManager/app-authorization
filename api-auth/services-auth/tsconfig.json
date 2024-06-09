@@ -12,6 +12,8 @@
     "paths": {
       "@App":["app.ts"],
       "@Commons/*": ["commons/*"],
+      "@WorkSpace/*": ["modules/work.space/*"],
+      "@DB/*": ["database/*"],
     }
   }
 }
