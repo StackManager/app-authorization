@@ -4,7 +4,7 @@ import { WorkSpace } from "@WorkSpace/models/work.space.model";
 
 export class WorkSpaceCreateService extends WorkSpaceBase {
 
-  getSession = true;
+  getSession = false;
   getPermission = ["word_space_create"]
 
   async run() {
@@ -22,6 +22,7 @@ export class WorkSpaceCreateService extends WorkSpaceBase {
       domain,
       keySecret,
       keyPublic,
+      status: true
     });
     
     await doc.save();

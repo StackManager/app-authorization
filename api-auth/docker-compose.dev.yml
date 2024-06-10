@@ -3,7 +3,7 @@ version: '3.7'
 services:
   service_mongo_auth:
     image: mongo:latest
-    container_name: mongo_auth
+    container_name: service_mongo_auth
     restart: unless-stopped
     env_file: .env
     environment:

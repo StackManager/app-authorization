@@ -4,7 +4,7 @@ import { WorkSpaceRead } from "@WorkSpace/models/crud/work.space.read";
 
 export class WorkSpaceDeletedService extends WorkSpaceBase {
 
-  getSession = true;
+  getSession = false;
   getPermission = ["work_space_deleted"]
   read: WorkSpaceRead = new WorkSpaceRead();
 
@@ -18,6 +18,6 @@ export class WorkSpaceDeletedService extends WorkSpaceBase {
     //Save and validate the changes
     await doc.save();
     // Response 
-    this.res.status(200).json({status: doc.status});
+    this.res.status(200).json({ name: doc.name, deleted: doc.deleted });
   }
 }

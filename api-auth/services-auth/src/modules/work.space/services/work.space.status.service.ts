@@ -4,7 +4,7 @@ import { WorkSpaceRead } from "@WorkSpace/models/crud/work.space.read";
 
 export class WorkSpaceStatusService extends WorkSpaceBase {
 
-  getSession = true;
+  getSession = false;
   getPermission = ["work_space_update_status"]
   read: WorkSpaceRead = new WorkSpaceRead();
 
@@ -18,6 +18,6 @@ export class WorkSpaceStatusService extends WorkSpaceBase {
     //Save and validate the changes
     await doc.save();
     // Response 
-    this.res.status(200).json({status: doc.status});
+    this.res.status(200).json({name: doc.name, status: doc.status});
   }
 }

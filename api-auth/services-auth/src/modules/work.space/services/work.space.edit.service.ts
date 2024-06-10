@@ -4,7 +4,7 @@ import { WorkSpaceRead } from "@WorkSpace/models/crud/work.space.read";
 
 export class WorkSpaceEditService extends WorkSpaceBase {
 
-  getSession = true;
+  getSession = false;
   getPermission = ["word_space_edit"]
   read: WorkSpaceRead = new WorkSpaceRead();
 
@@ -30,6 +30,6 @@ export class WorkSpaceEditService extends WorkSpaceBase {
     //Save and validate the changes
     await doc.save();
     // Response 
-    this.res.status(200).json({status: doc.status});
+    this.res.status(200).json({name: doc.name, status: doc.status});
   }
 }

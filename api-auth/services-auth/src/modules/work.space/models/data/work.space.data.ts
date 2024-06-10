@@ -2,9 +2,13 @@ import { ValidateRequired } from "@Commons/validator/required.validator";
 import { WorkSpaceAttrs } from "../interface/work.space.schema.interface";
 import { ValidateMaxLength } from "@Commons/validator/length.max.validator";
 import { ValidateMinLength } from "@Commons/validator/length.min.validator";
+import { WorkSpace } from "../work.space.model";
+import { ValidateSchema } from "@Commons/validator/schema.validator";
 
 
-export class WorkSpace implements WorkSpaceAttrs {
+export class WorkSpaceData implements WorkSpaceAttrs {
+  
+  id: string | undefined;
   domain: string = '';
   keySecret: string = '';
   keyPublic: string = '';
@@ -15,14 +19,29 @@ export class WorkSpace implements WorkSpaceAttrs {
   lastUpdateDate: Date = new Date();
   deleted: boolean = false; 
 
+
+  setId(value: any){
+    this.id = value;
+  }
+
+  getFilterId(){
+    if (!this.id) return {}
+    return { _id: { $ne: this.id }}
+  }
+
   // Getter y Setter para 'domain'
   getDomain(): string {
     return this.domain;
   }
-  setDomain(value: string): void {
+
+
+  async setDomain(value: string): Promise<void> {
     ValidateRequired.validateOrFail({value: value, name: 'domain'});
     ValidateMaxLength.validateOrFail({value: value, maxLength: 100, name: 'domain'});
     ValidateMinLength.validateOrFail({value: value, minLength: 10, name: 'domain'});
+    const filter = { domain: value, ...this.getFilterId() }
+    console.log(filter)
+    await ValidateSchema.validateUniqueField({ filter, model: WorkSpace, fieldName: 'domain'});
     this.domain = value;
   }
 
@@ -49,7 +68,7 @@ export class WorkSpace implements WorkSpaceAttrs {
   }
 
   // Getter y Setter para 'name'
-  getName(): string | undefined {
+  getName(): string {
     return this.name;
   }
   setName(value: string): void {
@@ -63,7 +82,7 @@ export class WorkSpace implements WorkSpaceAttrs {
   getDescription(): string | undefined {
     return this.description;
   }
-  setDescription(value: string): void {
+  setDescription(value:  string | undefined ): void {
     ValidateMaxLength.validateOrFail({value: value, maxLength: 255, name: 'description'});
     this.description = value;
   }
