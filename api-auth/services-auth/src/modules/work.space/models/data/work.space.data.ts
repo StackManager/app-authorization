@@ -7,6 +7,7 @@ import { ValidateSchema } from "@Commons/validator/schema.validator";
 
 
 export class WorkSpaceData implements WorkSpaceAttrs {
+
   
   id: string | undefined;
   domain: string = '';
@@ -15,6 +16,9 @@ export class WorkSpaceData implements WorkSpaceAttrs {
   status: boolean = false;
   name: string = '';
   description?: string;
+  maxAttemptsTokenActivationAccount: number = 0;
+  maxAttemptsPasswordReset: number = 0;
+  maxAttemptsLogin: number = 0;
   registrationDate: Date = new Date();
   lastUpdateDate: Date = new Date();
   deleted: boolean = false; 
@@ -40,7 +44,6 @@ export class WorkSpaceData implements WorkSpaceAttrs {
     ValidateMaxLength.validateOrFail({value: value, maxLength: 100, name: 'domain'});
     ValidateMinLength.validateOrFail({value: value, minLength: 10, name: 'domain'});
     const filter = { domain: value, ...this.getFilterId() }
-    console.log(filter)
     await ValidateSchema.validateUniqueField({ filter, model: WorkSpace, fieldName: 'domain'});
     this.domain = value;
   }

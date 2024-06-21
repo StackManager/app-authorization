@@ -10,11 +10,38 @@ const workSpaceSchema = new mongoose.Schema<WorkSpaceDoc>({
   description: {
     type: String
   },
-  domain: {  // domain.com
+  domain: { 
     type: String,  
     required: true, 
     unique: true 
   },
+
+  maxAttemptsTokenActivationAccount: { 
+    type: Number, 
+    default: 10,
+    min: 2, 
+    max: 10  
+  },
+  maxAttemptsPasswordReset: { 
+    type: Number, 
+    default: 10,
+    min: 2, 
+    max: 10 
+  },
+  maxAttemptsLogin: { 
+    type: Number, 
+    default: 10,
+    min: 2, 
+    max: 10 
+  },
+
+  // sessionTime:{
+  //   type: Number,
+  //   default: 1,
+  //   min: 1,
+  //   max: 1440
+  // },
+
   keySecret: {
     type: String,  
     required: true, 

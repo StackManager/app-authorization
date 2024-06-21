@@ -12,8 +12,9 @@
     "paths": {
       "@App":["app.ts"],
       "@Commons/*": ["commons/*"],
-      "@WorkSpace/*": ["modules/work.space/*"],
       "@DB/*": ["database/*"],
+      "@WorkSpace/*": ["modules/work.space/*"],
+      "@Authentification/*": ["modules/authentification/*"],
     }
   }
 }
