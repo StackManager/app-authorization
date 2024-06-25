@@ -1,10 +1,13 @@
 import { AuthentificationBase } from "@Authentification/controller/authentification.base";
 import { Authentification } from "@Authentification/models/authentification.model";
+import { AuthentificationData } from "@Authentification/models/data/authentification.data";
+import { WorkSpacesData } from "@Authentification/models/data/work.spaces.data";
 import { AuthentificationDoc } from "@Authentification/models/interface/authentification.schema.interface";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
 import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
 import { GenericError } from "@Commons/errors/factory/generic.error";
+import { Encrypt } from "@Commons/functions/encrypt";
 import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
 
 
@@ -31,23 +34,29 @@ export class AuthentificationPassworResetChange extends AuthentificationBase {
  * @param {string} params.password - New password sent from the client.
  * @throws {GenericError} Throws an error if the token is invalid or if the user is not registered with the workspace.
  */
-async authentificationValidateToken({ authDoc, index, tokenPasswordReset, password }: AuthentificationValidateTokenAttrs) {
+async authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, password }: AuthentificationValidateTokenAttrs) {
 
   // If an index exists, then check if the tokens match
-  if (authDoc?.workSpaces[index]?.tokenPasswordReset === tokenPasswordReset) {
+  if (authDoc?.workSpaces[index]?.tokenPasswordReset === tokenPasswordReset &&
+    authDoc?.workSpaces[index]?.tokenPasswordReset != ""
+  ) {
     //Reset the passwork and activate the account
-    authDoc.workSpaces[index].password = password;
+    const passwordEncript = await Encrypt.toHash(password)
+    authDoc.workSpaces[index].password = passwordEncript;
     authDoc.workSpaces[index].status = true;
     authDoc.workSpaces[index].attemptsPasswordReset = 0;
     authDoc.workSpaces[index].attemptsTokenActivationAccount = 0;
     authDoc.workSpaces[index].attemptsLogin = 0;
+    authDoc.workSpaces[index].tokenPasswordReset = "";
     await authDoc.save();
   } else {
+    authDoc.workSpaces[index].attemptsPasswordReset = authDoc.workSpaces[index].attemptsPasswordReset + 1
+    await authDoc.save();
     //Sent Generic error
     throw new GenericError([{
-      message: 'Token is not valid',
+      message: 'Token to reset password is not valid',
       field: 'token',
-      detail: 'Token is not valid',
+      detail: 'Token to reset password is not valid',
       code: MODELERRORTEXTTYPE.is_invalid
     }]);
   }
@@ -59,9 +68,16 @@ async authentificationValidateToken({ authDoc, index, tokenPasswordReset, passwo
       email,
       keyPublic,
       password,
-      passwordConfirmation,
       tokenPasswordReset
     } = this.req.body;
+
+    //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
+    const validateAuth = new AuthentificationData()
+    validateAuth.workSpaces.setPassword(password);
+
+    //Validadmos los datos que proceden del request body, y que pertenecen a workspace
+    const validateWork = new WorkSpacesData()
+    validateWork.setTokenPasswordReset(tokenPasswordReset);
 
     //Comprueba que exista el workspace valido o fall
     const workSpaceExist = new WorkSpaceExist();
@@ -75,7 +91,7 @@ async authentificationValidateToken({ authDoc, index, tokenPasswordReset, passwo
     const userInWorkspace = new UserFindWorkspace()
     const {index} = userInWorkspace.validateOrFail({ authDoc, workSpaceDoc});
 
-    this.authentificationValidateToken({ authDoc, index, tokenPasswordReset, password })
+    await this.authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, password })
     this.res.status(200).json({ success: true, email});
   }
 }

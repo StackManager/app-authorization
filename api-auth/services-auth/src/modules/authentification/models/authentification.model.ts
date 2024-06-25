@@ -15,7 +15,7 @@ const workSpacesSchema = new mongoose.Schema<WorkSpacesAttrs>({
   },
   tokenPasswordReset: { 
     type: String, 
-    required: true,
+    required: false,
     default: ''
   },
   tokenActivationAccount: { 

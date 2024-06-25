@@ -1,9 +1,12 @@
 import { AuthentificationBase } from "@Authentification/controller/authentification.base";
 import { Authentification } from "@Authentification/models/authentification.model";
+import { AuthentificationData } from "@Authentification/models/data/authentification.data";
 import { AuthentificationDoc } from "@Authentification/models/interface/authentification.schema.interface";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
-import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
-import { GenericError } from "@Commons/errors/factory/generic.error";
+import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
+import { Encrypt } from "@Commons/functions/encrypt";
+import { generateRandomToken } from "@Commons/generate/numbers";
+import { WorkSpaceData } from "@WorkSpace/models/data/work.space.data";
 import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
 import { Schema } from "mongoose";
 
@@ -14,7 +17,7 @@ interface AuthentificationCreateProfileAttrs{
 }
 
 interface AuthentificationAddProfileAttrs extends AuthentificationCreateProfileAttrs{
-  authentification: AuthentificationDoc
+  authDoc: AuthentificationDoc
 }
 
 export class AuthentificationRegisterService extends AuthentificationBase {
@@ -23,27 +26,22 @@ export class AuthentificationRegisterService extends AuthentificationBase {
   getPermission = ["authentification_register"]
 
   //Anade un nuevo password, y configuracion a un email ya creado
-  async authentificationAddProfile({ authentification, workSpaceId, password }: AuthentificationAddProfileAttrs) {
+  async authentificationAddProfile({ authDoc, workSpaceId, password }: AuthentificationAddProfileAttrs) {
 
-    // Verifica que el usuario no este registrado en el mismo dominio
-    const isRegistered = authentification.workSpaces.some(d => d.workSpaceId === workSpaceId);
-    if (isRegistered) {
-      throw new GenericError([{
-        message: `User already registered with this workspace`,
-        field: 'email',
-        detail: `User already registered with this workspace`,
-        code: MODELERRORTEXTTYPE.is_value_duplicated
-      }]);
-    }
-    //Registra la nueva configuracion
-    authentification.workSpaces.push({
+    //Validamos que el espacio de trabajo no este asociado al email
+    const userInWorkspace = new UserFindWorkspace()
+    userInWorkspace.validateWorkSpaceNoExistOrFail({ workSpaces: authDoc.workSpaces, workSpaceId });
+
+    //Registra la nueva configuracion, con la cuenta desactivada
+    authDoc.workSpaces.push({
       workSpaceId, 
       password,
+      tokenActivationAccount: generateRandomToken(6),
       attemptsTokenActivationAccount: 0,
       attemptsPasswordReset: 0,
       attemptsLogin: 0
     });
-
+    authDoc.save()
   }
   
   //Crea el perfil completo del usuario 
@@ -52,19 +50,20 @@ export class AuthentificationRegisterService extends AuthentificationBase {
     email,
     password
   }: AuthentificationCreateProfileAttrs){
-    const new_ = new Authentification({ 
+    const passwordEncript = await Encrypt.toHash(password)
+    const authDoc = new Authentification({ 
       email, 
       workSpaces: [{ 
         workSpaceId, 
-        password,
+        password: passwordEncript,
+        tokenActivationAccount: generateRandomToken(6),
         attemptsTokenActivationAccount: 0,
         attemptsPasswordReset: 0,
         attemptsLogin: 0
       }] 
     });
-    await new_.save();
+    await authDoc.save();
   }
-
 
   //Metodo inicial para ejecutar la clase completa
   //El controlador global se encarga de gestionar las excepciones
@@ -74,19 +73,28 @@ export class AuthentificationRegisterService extends AuthentificationBase {
       password,
       keyPublic,
     } = this.req.body;
-  
-    //Comprueba que exista el workspace valido o fall
+
+    //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
+    const validateAuth = new AuthentificationData()
+    validateAuth.setEmail(email);
+    validateAuth.workSpaces.setPassword(password);
+
+    //Validadmos los datos que proceden del request body, y que pertenecen a workspace
+    const validateWork = new WorkSpaceData()
+    validateWork.setKeyPublic(keyPublic);
+    
+    //Carga el workspace y comprueba que exista el workspace valido o fall
     const workSpaceExist = new WorkSpaceExist();
     const workSpaceDoc = await workSpaceExist.validateOrFail(keyPublic);
   
-    //Comprueba que exista el email valido
+    //Carga el usuario y comprueba que exista el email valido
     const userExist = new UserExist();
     const authDoc = await userExist.validate(email);
 
     if (authDoc){
       //Si el email existe añade solo un nuevo espacio de trabajo
       await this.authentificationAddProfile({
-        authentification: authDoc,
+        authDoc,
         workSpaceId: workSpaceDoc._id,
         email,
         password

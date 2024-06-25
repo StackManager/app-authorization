@@ -1,3 +1,4 @@
+import { AuthentificationListService } from '@Authentification/services/authentification.list.service';
 import { AuthentificationLoginService } from '@Authentification/services/authentification.login.service';
 import { AuthentificationRegisterActivateService } from '@Authentification/services/authentification.register.activate.service';
 import { AuthentificationRegisterService } from '@Authentification/services/authentification.register.service';
@@ -13,6 +14,15 @@ routers.post('/register', async (req: Request, res: Response, next: NextFunction
    await auth.handleAsync(async () => {
      await auth.run();
    });
+});
+
+//TODO: disable in production
+// Ruta GET para obtener el listado con paginador
+routers.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  const exec = new AuthentificationListService(req, res, next);
+  await exec.handleAsync(async () => {
+    await exec.run();
+  });
 });
 
 // Ruta POST valida un nuevo usuario asignado a un dominio con un token

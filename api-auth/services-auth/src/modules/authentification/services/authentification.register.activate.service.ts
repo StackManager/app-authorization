@@ -1,18 +1,19 @@
 import { AuthentificationBase } from "@Authentification/controller/authentification.base";
 import { Authentification } from "@Authentification/models/authentification.model";
+import { AuthentificationData } from "@Authentification/models/data/authentification.data";
 import { AuthentificationDoc } from "@Authentification/models/interface/authentification.schema.interface";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
 import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
 import { GenericError } from "@Commons/errors/factory/generic.error";
-import { WorkSpaceDoc } from "@WorkSpace/models/interface/work.space.schema.interface";
+import { WorkSpaceData } from "@WorkSpace/models/data/work.space.data";
 import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
 
 
 interface AuthentificationValidateTokenAttrs{
   authDoc: AuthentificationDoc,
   index: number,
-  tokenActivation: string
+  tokenActivationAccount: string
 }
 
 export class AuthentificationRegisterActivateService extends AuthentificationBase {
@@ -29,13 +30,22 @@ export class AuthentificationRegisterActivateService extends AuthentificationBas
  * @param {string} params.tokenActivation - The token sent from the client.
  * @throws {GenericError} Throws an error if the token is invalid or if the user is not registered with the workspace.
  */
-  async authentificationValidateToken({ authDoc, index, tokenActivation }: AuthentificationValidateTokenAttrs) {
+  async authentificationValidateToken({ authDoc, index, tokenActivationAccount }: AuthentificationValidateTokenAttrs) {
 
-    // If an index exists, then check if the tokens match
-    if (authDoc?.workSpaces[index]?.tokenActivationAccount === tokenActivation) {
-      authDoc.workSpaces[index].status = true;
+    // If an index exists, then check if the status and token is valid
+    if (authDoc.workSpaces[index].status || authDoc.workSpaces[index].tokenActivationAccount == "" ) {      
+      throw new GenericError([{
+        message: 'Account is not valid activation',
+        field: 'email',
+        detail: 'Account is not valid activation',
+        code: MODELERRORTEXTTYPE.is_invalid
+      }]);
+    }
+    
+    // If an index exists, then check if the tokens match 
+    if (authDoc?.workSpaces[index]?.tokenActivationAccount !== tokenActivationAccount){
+      authDoc.workSpaces[index].attemptsTokenActivationAccount = authDoc.workSpaces[index].attemptsTokenActivationAccount + 1;
       await authDoc.save();
-    } else {
       throw new GenericError([{
         message: 'Token is not valid',
         field: 'token',
@@ -43,6 +53,10 @@ export class AuthentificationRegisterActivateService extends AuthentificationBas
         code: MODELERRORTEXTTYPE.is_invalid
       }]);
     }
+
+    authDoc.workSpaces[index].status = true;
+    await authDoc.save();
+
   }
 
   //Metodo inicial para ejecutar la clase completa
@@ -51,9 +65,18 @@ export class AuthentificationRegisterActivateService extends AuthentificationBas
     const { 
       email,
       keyPublic,
-      tokenActivation
+      tokenActivationAccount
     } = this.req.body;
   
+    //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
+    const validateAuth = new AuthentificationData()
+    validateAuth.setEmail(email);
+    validateAuth.workSpaces.setTokenActivationAccount(tokenActivationAccount);
+
+    //Validadmos los datos que proceden del request body, y que pertenecen a workspace
+    const validateWork = new WorkSpaceData()
+    validateWork.setKeyPublic(keyPublic);
+
     //Comprueba que exista el workspace valido o fall
     const workSpaceExist = new WorkSpaceExist();
     const workSpaceDoc = await workSpaceExist.validateOrFail(keyPublic);
@@ -65,7 +88,7 @@ export class AuthentificationRegisterActivateService extends AuthentificationBas
     const userInWorkspace = new UserFindWorkspace()
     const {index} = userInWorkspace.validateOrFail({ authDoc, workSpaceDoc});
 
-    this.authentificationValidateToken({ authDoc, index, tokenActivation })
+    await this.authentificationValidateToken({ authDoc, index, tokenActivationAccount })
     this.res.status(200).json({ success: true, email });
   }
 }

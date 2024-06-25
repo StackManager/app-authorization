@@ -1,8 +1,8 @@
 import { Schema, Document } from "mongoose";
 
-export const SCHEMAAUTHENTIFICATION = 'work.space'
-export const SCHEMALANGUAGE = 'language'
-export const SCHEMAROLE = "role"
+export const SCHEMAAUTHENTIFICATION = 'authentification.users'
+export const SCHEMAROLE = "authentification.roles"
+export const SCHEMALANGUAGE = 'configuration.languages'
 
 // Define la interfaz para un dominio
 export interface WorkSpacesAttrs {

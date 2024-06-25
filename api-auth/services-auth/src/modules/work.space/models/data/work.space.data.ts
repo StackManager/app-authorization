@@ -4,9 +4,11 @@ import { ValidateMaxLength } from "@Commons/validator/length.max.validator";
 import { ValidateMinLength } from "@Commons/validator/length.min.validator";
 import { WorkSpace } from "../work.space.model";
 import { ValidateSchema } from "@Commons/validator/schema.validator";
+import { ValidateRegex } from "@Commons/validator/regex.validator";
+import { base64PublicKeyRegex } from "@Commons/constants/regex";
 
 
-export class WorkSpaceData implements WorkSpaceAttrs {
+export class WorkSpaceData {
 
   
   id: string | undefined;
@@ -53,9 +55,11 @@ export class WorkSpaceData implements WorkSpaceAttrs {
     return this.keySecret;
   }
   setKeySecret(value: string): void {
-    ValidateRequired.validateOrFail({value: value, name: 'key_secret'});
-    ValidateMaxLength.validateOrFail({value: value, maxLength: 255, name: 'key_secret'});
-    ValidateMinLength.validateOrFail({value: value, minLength: 10, name: 'key_secret'});
+    const name = 'key_secret'
+    ValidateRequired.validateOrFail({value: value, name});
+    ValidateMaxLength.validateOrFail({value: value, maxLength: 255, name});
+    ValidateMinLength.validateOrFail({value: value, minLength: 10, name});
+    ValidateRegex.validateOrFail({ value, name, regex: base64PublicKeyRegex });
     this.keySecret = value;
   }
 
@@ -64,9 +68,11 @@ export class WorkSpaceData implements WorkSpaceAttrs {
     return this.keyPublic;
   }
   setKeyPublic(value: string): void {
-    ValidateRequired.validateOrFail({value: value, name: 'key_public'});
-    ValidateMaxLength.validateOrFail({value: value, maxLength: 255, name: 'key_public'});
-    ValidateMinLength.validateOrFail({value: value, minLength: 10, name: 'key_public'});
+    const name = 'key_public'
+    ValidateRequired.validateOrFail({value: value, name});
+    ValidateMaxLength.validateOrFail({value: value, maxLength: 255, name});
+    ValidateMinLength.validateOrFail({value: value, minLength: 10, name});
+    ValidateRegex.validateOrFail({ value, name, regex: base64PublicKeyRegex });
     this.keyPublic = value;
   }
 
