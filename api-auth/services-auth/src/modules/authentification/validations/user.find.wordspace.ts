@@ -61,8 +61,8 @@ export class UserFindWorkspace{
     }
   }
 
-  validateOrFail({ authDoc, workSpaceDoc }: ValidateAttrs): Validate {
-    const { isValid, index } = this.validate({ authDoc, workSpaceDoc })
+  validateExistOrFail({ authDoc, workSpaceDoc }: ValidateAttrs): Validate {
+    const { isValid, index } = this.validateExist({ authDoc, workSpaceDoc })
 
     if (!isValid) {
       throw new GenericError([{
@@ -75,7 +75,7 @@ export class UserFindWorkspace{
     return { isValid, index }
   }
 
-  validate({ authDoc, workSpaceDoc }: ValidateAttrs): Validate {
+  validateExist({ authDoc, workSpaceDoc }: ValidateAttrs): Validate {
     // Verifica que el usuario este asociado al dominio
     const index = authDoc.workSpaces.findIndex(d => d.workSpaceId.toString() === workSpaceDoc._id.toString());
     let isValid = false;
@@ -87,6 +87,6 @@ export class UserFindWorkspace{
     return { isValid, index }
   }
 
-
+  
 
 }

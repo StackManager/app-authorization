@@ -24,44 +24,48 @@ export class AuthentificationPassworResetChange extends AuthentificationBase {
   getSession = false;
   getPermission = ["word_space_create"]
 
-/**
- * Validates the token for user authentication, and reset the passwork
- *
- * @param {Object} params - The parameters for the function.
- * @param {Object} params.authDoc - The document associated with the user's registration.
- * @param {Object} params.index - Index workspace to make the changes.
- * @param {string} params.tokenPasswordReset - The token sent from the client.
- * @param {string} params.password - New password sent from the client.
- * @throws {GenericError} Throws an error if the token is invalid or if the user is not registered with the workspace.
- */
-async authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, password }: AuthentificationValidateTokenAttrs) {
+  /**
+   * Validates the token for user authentication, and reset the passwork
+   *
+   * @param {Object} params - The parameters for the function.
+   * @param {Object} params.authDoc - The document associated with the user's registration.
+   * @param {Object} params.index - Index workspace to make the changes.
+   * @param {string} params.tokenPasswordReset - The token sent from the client.
+   * @param {string} params.password - New password sent from the client.
+   * @throws {GenericError} Throws an error if the token is invalid or if the user is not registered with the workspace.
+   */
+  async authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, password }: AuthentificationValidateTokenAttrs) {
 
-  // If an index exists, then check if the tokens match
-  if (authDoc?.workSpaces[index]?.tokenPasswordReset === tokenPasswordReset &&
-    authDoc?.workSpaces[index]?.tokenPasswordReset != ""
-  ) {
-    //Reset the passwork and activate the account
-    const passwordEncript = await Encrypt.toHash(password)
-    authDoc.workSpaces[index].password = passwordEncript;
-    authDoc.workSpaces[index].status = true;
-    authDoc.workSpaces[index].attemptsPasswordReset = 0;
-    authDoc.workSpaces[index].attemptsTokenActivationAccount = 0;
-    authDoc.workSpaces[index].attemptsLogin = 0;
-    authDoc.workSpaces[index].tokenPasswordReset = "";
-    await authDoc.save();
-  } else {
-    authDoc.workSpaces[index].attemptsPasswordReset = authDoc.workSpaces[index].attemptsPasswordReset + 1
-    await authDoc.save();
-    //Sent Generic error
-    throw new GenericError([{
-      message: 'Token to reset password is not valid',
-      field: 'token',
-      detail: 'Token to reset password is not valid',
-      code: MODELERRORTEXTTYPE.is_invalid
-    }]);
+    // If an index exists, then check if the tokens match
+    if (authDoc?.workSpaces[index]?.tokenPasswordReset === tokenPasswordReset &&
+      authDoc?.workSpaces[index]?.tokenPasswordReset != ""
+    ) {
+      //Reset the passwork and activate the account
+      const passwordEncript = await Encrypt.toHash(password)
+      authDoc.workSpaces[index].password = passwordEncript;
+      authDoc.workSpaces[index].status = true;
+      authDoc.workSpaces[index].attemptsPasswordReset = 0;
+      authDoc.workSpaces[index].attemptsTokenActivationAccount = 0;
+      authDoc.workSpaces[index].attemptsLogin = 0;
+      authDoc.workSpaces[index].tokenPasswordReset = "";
+      await authDoc.save();
+    } else {
+      authDoc.workSpaces[index].attemptsPasswordReset = authDoc.workSpaces[index].attemptsPasswordReset + 1
+      await authDoc.save();
+      //Sent Generic error
+      throw new GenericError([{
+        message: 'Token to reset password is not valid',
+        field: 'token',
+        detail: 'Token to reset password is not valid',
+        code: MODELERRORTEXTTYPE.is_invalid
+      }]);
+    }
   }
-}
 
+  /**
+   *  Metodo inicial para ejecutar la clase completa
+   *  El controlador global se encarga de gestionar las excepciones
+   */
   async run() {
 
     const { 
@@ -89,7 +93,7 @@ async authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, p
     
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()
-    const {index} = userInWorkspace.validateOrFail({ authDoc, workSpaceDoc});
+    const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
 
     await this.authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, password })
     this.res.status(200).json({ success: true, email});

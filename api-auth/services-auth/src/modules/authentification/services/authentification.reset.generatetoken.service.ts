@@ -45,6 +45,10 @@ export class AuthentificationPassworResetGenerateToken extends AuthentificationB
       }
   }
 
+  /**
+   *  Metodo inicial para ejecutar la clase completa
+   *  El controlador global se encarga de gestionar las excepciones
+   */
   async run() {
 
     const { 
@@ -70,7 +74,7 @@ export class AuthentificationPassworResetGenerateToken extends AuthentificationB
     
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()
-    const {index} = userInWorkspace.validateOrFail({ authDoc, workSpaceDoc});
+    const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
 
     await this.authentificationGenerateTokenReset({ authDoc, index })
     this.res.status(200).json({ success: true, email });

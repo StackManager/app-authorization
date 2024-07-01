@@ -59,8 +59,10 @@ export class AuthentificationRegisterActivateService extends AuthentificationBas
 
   }
 
-  //Metodo inicial para ejecutar la clase completa
-  //El controlador global se encarga de gestionar las excepciones
+  /**
+   *  Metodo inicial para ejecutar la clase completa
+   *  El controlador global se encarga de gestionar las excepciones
+   */
   async run() {
     const { 
       email,
@@ -86,7 +88,7 @@ export class AuthentificationRegisterActivateService extends AuthentificationBas
     const authDoc = await userExist.validateOrFail(email);
 
     const userInWorkspace = new UserFindWorkspace()
-    const {index} = userInWorkspace.validateOrFail({ authDoc, workSpaceDoc});
+    const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
 
     await this.authentificationValidateToken({ authDoc, index, tokenActivationAccount })
     this.res.status(200).json({ success: true, email });

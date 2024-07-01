@@ -7,3 +7,4 @@ moduleAlias.addAlias('@Commons', _dir + '/commons');
 moduleAlias.addAlias('@App', _dir + '/app.ts');
 moduleAlias.addAlias('@WorkSpace', _dir + '/modules/work.space');
 moduleAlias.addAlias('@Authentification', _dir + '/modules/authentification');
+moduleAlias.addAlias('@Role', _dir + '/modules/role');

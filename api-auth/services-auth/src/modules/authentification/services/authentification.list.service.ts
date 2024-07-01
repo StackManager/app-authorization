@@ -7,6 +7,10 @@ export class AuthentificationListService extends AuthentificationBase {
   getSession = false;
   getPermission = ["authentification_space_list"]
 
+  /**
+   *  Metodo inicial para ejecutar la clase completa
+   *  El controlador global se encarga de gestionar las excepciones
+   */
   async run() {
 
     const {id, name, page = 1, pageSize = 10, status, deleted } = this.req.query;

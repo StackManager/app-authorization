@@ -65,8 +65,10 @@ export class AuthentificationRegisterService extends AuthentificationBase {
     await authDoc.save();
   }
 
-  //Metodo inicial para ejecutar la clase completa
-  //El controlador global se encarga de gestionar las excepciones
+  /**
+   *  Metodo inicial para ejecutar la clase completa
+   *  El controlador global se encarga de gestionar las excepciones
+   */
   async run() {
     const { 
       email,

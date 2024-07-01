@@ -32,8 +32,10 @@ export class AuthentificationLoginService extends AuthentificationBase {
 
   }
 
-  //Metodo inicial para ejecutar la clase completa
-  //El controlador global se encarga de gestionar las excepciones
+  /**
+   *  Metodo inicial para ejecutar la clase completa
+   *  El controlador global se encarga de gestionar las excepciones
+   */
   async run() {
     const { 
       email,
@@ -60,7 +62,7 @@ export class AuthentificationLoginService extends AuthentificationBase {
     
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()
-    const {index} = userInWorkspace.validateOrFail({ authDoc, workSpaceDoc});
+    const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
     //Valida que el password coincida con el enviado
     await userInWorkspace.validatePasswordOrFail({authDoc, index, password });
 
