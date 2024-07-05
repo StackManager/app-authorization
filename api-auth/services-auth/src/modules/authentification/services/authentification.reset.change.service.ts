@@ -8,6 +8,7 @@ import { UserFindWorkspace } from "@Authentification/validations/user.find.words
 import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
 import { GenericError } from "@Commons/errors/factory/generic.error";
 import { Encrypt } from "@Commons/functions/encrypt";
+import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
 import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
 
 
@@ -22,7 +23,7 @@ interface AuthentificationValidateTokenAttrs{
 export class AuthentificationPassworResetChange extends AuthentificationBase {
 
   getSession = false;
-  getPermission = ["word_space_create"]
+  permissionService =  ["authentification_reset_change"]
 
   /**
    * Validates the token for user authentication, and reset the passwork
@@ -70,10 +71,12 @@ export class AuthentificationPassworResetChange extends AuthentificationBase {
 
     const { 
       email,
-      keyPublic,
       password,
       tokenPasswordReset
     } = this.req.body;
+
+    const workSpaceFromHeader  = new WorkSpaceFromHeader()
+    const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
 
     //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
     const validateAuth = new AuthentificationData()
@@ -83,13 +86,9 @@ export class AuthentificationPassworResetChange extends AuthentificationBase {
     const validateWork = new WorkSpacesData()
     validateWork.setTokenPasswordReset(tokenPasswordReset);
 
-    //Comprueba que exista el workspace valido o fall
-    const workSpaceExist = new WorkSpaceExist();
-    const workSpaceDoc = await workSpaceExist.validateOrFail(keyPublic);
-
     //Comprueba que exista el email valido
     const userExist = new UserExist();
-    const authDoc = await userExist.validateOrFail(email);
+    const authDoc = await userExist.validateOrFail({ email });
     
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()

@@ -5,6 +5,7 @@ import { AuthentificationDoc } from "@Authentification/models/interface/authenti
 import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
 import { JWT } from "@Commons/session/jwt.session";
+import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
 import { WorkSpaceData } from "@WorkSpace/models/data/work.space.data";
 import { WorkSpaceDoc } from "@WorkSpace/models/interface/work.space.schema.interface";
 import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
@@ -18,14 +19,15 @@ interface AuthentificationLoginAttrs{
 export class AuthentificationLoginService extends AuthentificationBase {
 
   getSession = false;
-  getPermission = ["word_space_create"]
+  permissionService =  ["authentification_login"]
 
   authentificationLogin({ authDoc, workSpaceDoc }: AuthentificationLoginAttrs) {
     // Aquí generamos el token JWT
     const payload = {
       id: authDoc.id,
       email: authDoc.email,
-      //permissions: this.getPermission
+      keyPublic: workSpaceDoc.keyPublic,
+      workSpaceId: workSpaceDoc._id
     };
 
     return JWT.sign({ payload, keySecret: workSpaceDoc.keySecret })
@@ -39,26 +41,20 @@ export class AuthentificationLoginService extends AuthentificationBase {
   async run() {
     const { 
       email,
-      keyPublic,
       password
     } = this.req.body;
   
+    const workSpaceFromHeader  = new WorkSpaceFromHeader()
+    const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
+
     //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
     const validateAuth = new AuthentificationData()
     validateAuth.setEmail(email);
     validateAuth.workSpaces.setPassword(password);
 
-    //Validadmos los datos que proceden del request body, y que pertenecen a workspace
-    const validateWork = new WorkSpaceData()
-    validateWork.setKeyPublic(keyPublic);
-
-    //Comprueba que exista el workspace valido o fall
-    const workSpaceExist = new WorkSpaceExist();
-    const workSpaceDoc = await workSpaceExist.validateOrFail(keyPublic);
-
     //Comprueba que exista el email valido
     const userExist = new UserExist();
-    const authDoc = await userExist.validateOrFail(email);
+    const authDoc = await userExist.validateOrFail({ email });
     
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()

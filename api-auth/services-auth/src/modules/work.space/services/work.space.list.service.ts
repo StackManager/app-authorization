@@ -4,8 +4,8 @@ import { WorkSpaceList } from "@WorkSpace/models/crud/work.space.list";
 
 export class WorkSpaceListService extends WorkSpaceBase {
 
-  getSession = false;
-  getPermission = ["work_space_list"]
+  getSession = true;
+  permissionService =  ["work_space_list"]
 
   async run() {
 

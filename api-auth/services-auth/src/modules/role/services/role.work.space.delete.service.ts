@@ -5,7 +5,7 @@ import { RoleRead } from "@Role/models/crud/role.read";
 export class RoleWorkSpaceDeletedService extends RoleBase {
 
   getSession = true;
-  getPermission = ["role_work_space_deleted"]
+  permissionService =  ["role_work_space_deleted"]
   read: RoleRead = new RoleRead();
 
   async run() {

@@ -5,7 +5,7 @@ import { RoleData } from "@Role/models/data/role.data";
 export class RoleWorkSpaceEditService extends RoleBase {
 
   getSession = true;
-  getPermission = ["role_work_space_edit"]
+  permissionService =  ["role_work_space_edit"]
   read: RoleRead = new RoleRead();
 
   async run() {

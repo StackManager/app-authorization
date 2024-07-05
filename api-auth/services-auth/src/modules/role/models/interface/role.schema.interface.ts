@@ -9,6 +9,7 @@ export interface RoleAttrs {
   status: boolean; // El status del rol
   deleted: boolean; // Si se encuentra eliminado
   workSpaceId: Schema.Types.ObjectId; //El espacio de trabajo  donde esta subscrito el rol
+  permissions: Schema.Types.ObjectId[];
 }
 
 export interface RoleDoc extends RoleAttrs, Document {}

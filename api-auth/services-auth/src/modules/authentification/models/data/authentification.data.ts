@@ -5,13 +5,15 @@ import { ValidateMinLength } from "@Commons/validator/length.min.validator";
 import { WorkSpacesData } from "./work.spaces.data";
 import { ValidateRegex } from "@Commons/validator/regex.validator";
 import { emailRegex } from "@Commons/constants/regex";
+import { DataBase } from "@Commons/data/data.base";
 
 
-export class AuthentificationData {
+export class AuthentificationData extends DataBase{
   email: string = '';
   workSpaces: WorkSpacesData;
 
   constructor (){
+    super()
     this.workSpaces = new WorkSpacesData();
   }
 

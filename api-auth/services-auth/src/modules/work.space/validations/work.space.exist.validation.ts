@@ -5,7 +5,6 @@ import { WorkSpace } from "@WorkSpace/models/work.space.model";
 
 export class WorkSpaceExist {
 
-  
   async validateOrFail(keyPublic: string): Promise<WorkSpaceDoc> {
 
     return await ValidateSchema.validateExistenceOrFail<WorkSpaceDoc>({

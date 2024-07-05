@@ -5,7 +5,7 @@ import { AuthentificationList } from "@Authentification/models/crud/authentifica
 export class AuthentificationListService extends AuthentificationBase {
 
   getSession = false;
-  getPermission = ["authentification_space_list"]
+  permissionService = ["authentification_list"]
 
   /**
    *  Metodo inicial para ejecutar la clase completa

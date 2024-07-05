@@ -4,8 +4,8 @@ import { WorkSpaceRead } from "@WorkSpace/models/crud/work.space.read";
 
 export class WorkSpaceDeletedService extends WorkSpaceBase {
 
-  getSession = false;
-  getPermission = ["work_space_deleted"]
+  getSession = true;
+  permissionService =  ["work_space_deleted"]
   read: WorkSpaceRead = new WorkSpaceRead();
 
   async run() {

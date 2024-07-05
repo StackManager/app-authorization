@@ -4,7 +4,7 @@ import { RoleList } from "@Role/models/crud/role.list";
 
 export class RoleWorkSpaceListService extends RoleBase {
   getSession = true;
-  getPermission = ['role_work_space_list'];
+  permissionService =  ['role_work_space_list'];
 
   /**
    *  Metodo inicial para ejecutar la clase completa

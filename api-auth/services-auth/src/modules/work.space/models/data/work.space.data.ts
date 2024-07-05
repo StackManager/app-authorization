@@ -41,7 +41,7 @@ export class WorkSpaceData {
   }
 
 
-  async setDomain(value: string): Promise<void> {
+  async setDomain(value: any): Promise<void> {
     ValidateRequired.validateOrFail({value: value, name: 'domain'});
     ValidateMaxLength.validateOrFail({value: value, maxLength: 100, name: 'domain'});
     ValidateMinLength.validateOrFail({value: value, minLength: 10, name: 'domain'});
@@ -54,7 +54,7 @@ export class WorkSpaceData {
   getKeySecret(): string {
     return this.keySecret;
   }
-  setKeySecret(value: string): void {
+  setKeySecret(value: any): void {
     const name = 'key_secret'
     ValidateRequired.validateOrFail({value: value, name});
     ValidateMaxLength.validateOrFail({value: value, maxLength: 255, name});
@@ -67,7 +67,7 @@ export class WorkSpaceData {
   getKeyPublic(): string {
     return this.keyPublic;
   }
-  setKeyPublic(value: string): void {
+  setKeyPublic(value: any): void {
     const name = 'key_public'
     ValidateRequired.validateOrFail({value: value, name});
     ValidateMaxLength.validateOrFail({value: value, maxLength: 255, name});
@@ -80,7 +80,7 @@ export class WorkSpaceData {
   getName(): string {
     return this.name;
   }
-  setName(value: string): void {
+  setName(value: any): void {
     ValidateRequired.validateOrFail({value: value, name: 'name'});
     ValidateMaxLength.validateOrFail({value: value, maxLength: 100, name: 'name'});
     ValidateMinLength.validateOrFail({value: value, minLength: 3, name: 'name'});

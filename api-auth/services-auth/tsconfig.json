@@ -16,6 +16,7 @@
       "@WorkSpace/*": ["modules/work.space/*"],
       "@Authentification/*": ["modules/authentification/*"],
       "@Role/*": ["modules/role/*"],
+      "@Permission/*": ["modules/permission/*"],
     }
   }
 }

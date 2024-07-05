@@ -4,8 +4,8 @@ import { WorkSpaceRead } from "@WorkSpace/models/crud/work.space.read";
 
 export class WorkSpaceEditService extends WorkSpaceBase {
 
-  getSession = false;
-  getPermission = ["word_space_edit"]
+  getSession = true;
+  permissionService =  ["word_space_edit"]
   read: WorkSpaceRead = new WorkSpaceRead();
 
   async run() {

@@ -5,7 +5,7 @@ import { RoleRead } from "@Role/models/crud/role.read";
 export class RoleWorkSpaceStatusService extends RoleBase {
 
   getSession = true;
-  getPermission = ["role_work_space_update_status"]
+  permissionService =  ["role_work_space_update_status"]
   read: RoleRead = new RoleRead();
 
   async run() {

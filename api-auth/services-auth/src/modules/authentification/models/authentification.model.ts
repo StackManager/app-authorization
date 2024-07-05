@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
-import { SCHEMAAUTHENTIFICATION, AuthentificationDoc, SCHEMALANGUAGE, SCHEMAROLE, WorkSpacesAttrs } from './interface/authentification.schema.interface';
+import { SCHEMAAUTHENTIFICATION, AuthentificationDoc, WorkSpacesAttrs } from './interface/authentification.schema.interface';
 import { AuthentificationMiddleware } from './middleware/authentification.middleware';
 import paginate from 'mongoose-paginate-v2';
 import { SCHEMAWORKSPACE } from '@WorkSpace/models/interface/work.space.schema.interface';
+import { SCHEMAROLE } from '@Role/models/interface/role.schema.interface';
 
 const workSpacesSchema = new mongoose.Schema<WorkSpacesAttrs>({
   password: { 
@@ -52,16 +53,17 @@ const workSpacesSchema = new mongoose.Schema<WorkSpacesAttrs>({
     ref: SCHEMAWORKSPACE, 
     required: true 
   },
+  roleIds: [{
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: SCHEMAROLE, 
+    default:[]
+  }]
   // langId: { 
   //   type: mongoose.Schema.Types.ObjectId, 
   //   ref: SCHEMALANGUAGE, 
   //   required: true 
   // },
-  // roleIds: [{ 
-  //   type: mongoose.Schema.Types.ObjectId, 
-  //   ref: SCHEMAROLE, 
-  //   required: true 
-  // }]
+
 });
 
 const AuthentificationSchema = new mongoose.Schema<AuthentificationDoc>({

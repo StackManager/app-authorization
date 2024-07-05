@@ -4,8 +4,8 @@ import { WorkSpace } from "@WorkSpace/models/work.space.model";
 
 export class WorkSpaceCreateService extends WorkSpaceBase {
 
-  getSession = false;
-  getPermission = ["word_space_create"]
+  getSession = true;
+  permissionService =  ["word_space_create"]
 
   async run() {
     const { 

@@ -6,6 +6,7 @@ import {
 import { RoleMiddleware } from './middleware/role.middleware';
 import paginate from 'mongoose-paginate-v2';
 import { SCHEMAWORKSPACE } from '@WorkSpace/models/interface/work.space.schema.interface';
+import { SCHEMAPERMISSION } from '@Permission/models/interface/permissionschema.interface';
 
 const roleSchema = new mongoose.Schema<RoleDoc>({
   name: {
@@ -26,11 +27,16 @@ const roleSchema = new mongoose.Schema<RoleDoc>({
     type: Boolean, 
     default: false 
   },
-  workSpaceId: { 
+  workSpaceId: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: SCHEMAWORKSPACE, 
     required: true 
   },
+  permissions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: SCHEMAPERMISSION,
+    required: false 
+  }]
 });
 
 RoleMiddleware.validate(roleSchema);

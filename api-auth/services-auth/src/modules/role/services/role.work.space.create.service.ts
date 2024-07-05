@@ -6,7 +6,7 @@ import { WorkSpace } from "@WorkSpace/models/work.space.model";
 export class RoleWorkSpaceCreateService extends RoleBase {
 
   getSession = true;
-  getPermission = ["role_work_space_create"]
+  permissionService =  ["role_work_space_create"]
 
   async run() {
     const { 

@@ -5,6 +5,7 @@ import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
 import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
 import { GenericError } from "@Commons/errors/factory/generic.error";
+import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
 import { WorkSpaceData } from "@WorkSpace/models/data/work.space.data";
 import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
 
@@ -16,7 +17,7 @@ interface AuthentificationGenerateTokenAttrs{
 export class AuthentificationPassworResetGenerateToken extends AuthentificationBase {
 
   getSession = false;
-  getPermission = ["word_space_create"]
+  permissionService =  ["authentification_reset_generate_token"]
 
   /**
    * Generate the token to reset a account
@@ -52,25 +53,19 @@ export class AuthentificationPassworResetGenerateToken extends AuthentificationB
   async run() {
 
     const { 
-      email,
-      keyPublic,
+      email
     } = this.req.body;
 
     //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
     const validateAuth = new AuthentificationData()
     validateAuth.setEmail(email);
 
-    //Validadmos los datos que proceden del request body, y que pertenecen a workspace
-    const validateWork = new WorkSpaceData()
-    validateWork.setKeyPublic(keyPublic);
-
-    //Comprueba que exista el workspace valido o fall
-    const workSpaceExist = new WorkSpaceExist();
-    const workSpaceDoc = await workSpaceExist.validateOrFail(keyPublic);
+    const workSpaceFromHeader  = new WorkSpaceFromHeader()
+    const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
 
     //Comprueba que exista el email valido
     const userExist = new UserExist();
-    const authDoc = await userExist.validateOrFail(email);
+    const authDoc = await userExist.validateOrFail({ email });
     
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()

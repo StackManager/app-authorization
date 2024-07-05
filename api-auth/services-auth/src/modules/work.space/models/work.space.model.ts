@@ -44,11 +44,13 @@ const workSpaceSchema = new mongoose.Schema<WorkSpaceDoc>({
 
   keySecret: {
     type: String,  
-    required: true, 
+    required: true,
+    unique: true 
   },
   keyPublic: {
     type: String,  
-    required: true, 
+    required: true,
+    unique: true 
   },
   status: {
     type: Boolean,  
