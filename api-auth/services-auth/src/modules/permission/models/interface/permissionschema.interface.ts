@@ -8,6 +8,7 @@ export interface PermissionAttrs {
   slug: string;
   status: boolean; // El status del rol
   deleted: boolean; // Si se encuentra eliminado
+  workSpaceId: Schema.Types.ObjectId; //El espacio de trabajo  donde esta subscrito el rol
 }
 
 export interface PermissionDoc extends PermissionAttrs, Document {}

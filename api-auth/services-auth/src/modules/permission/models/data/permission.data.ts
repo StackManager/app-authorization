@@ -25,6 +25,13 @@ export class PermissionData extends DataBase{
     this.name = value;
   }
 
+  setWorkSpaceId(value: string): void {
+    const name = 'workSpaceId';
+    ValidateRequired.validateOrFail({ value, name });
+    ValidateObjectId.validateOrFail({ value, name });
+    this.wordSpaceId = value;
+  }
+
 
   getSlug(): string {
     return generateSlug(this.name);

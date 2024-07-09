@@ -34,7 +34,7 @@ export class RoleData extends DataBase{
     const name = 'workSpaceId';
     ValidateRequired.validateOrFail({ value, name });
     ValidateObjectId.validateOrFail({ value, name });
-    this.name = value;
+    this.wordSpaceId = value;
   }
 
 }

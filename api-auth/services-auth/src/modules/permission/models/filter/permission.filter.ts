@@ -32,6 +32,12 @@ export class PermissionFilter {
     this.filterManager.addFilter(filter);
   }
 
+  workSpaceId(value: any): void {
+    this.validate.setWorkSpaceId(value);
+    const filter: FilterOptions = { value, key: 'workSpaceId' };
+    this.filterManager.addFilter(filter);
+  }
+
   active(){
     this.deleted(false);
     this.status(true);

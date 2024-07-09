@@ -1,5 +1,6 @@
 import { PermissionCreateService } from '@Permission/services/permission.create.service';
 import { PermissionDeletedService } from '@Permission/services/permission.delete.service';
+import { PermissionEditService } from '@Permission/services/permission.edit.service';
 import { PermissionListService } from '@Permission/services/permission.list.service';
 import { PermissionStatusService } from '@Permission/services/permission.status.service';
 import { Request, Response, NextFunction, Router } from 'express';
@@ -15,8 +16,16 @@ routers.post('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // Ruta GET Lista los permissions de un 
-routers.get('/', async (req: Request, res: Response, next: NextFunction) => {
+routers.get('/:workSpaceId', async (req: Request, res: Response, next: NextFunction) => {
   const auth = new PermissionListService(req, res, next);
+   await auth.handleAsync(async () => {
+     await auth.run();
+   });
+});
+
+// Ruta PUT editar una nueva instancia
+routers.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+  const auth = new PermissionEditService(req, res, next);
    await auth.handleAsync(async () => {
      await auth.run();
    });

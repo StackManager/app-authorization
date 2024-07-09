@@ -1,7 +1,6 @@
 import { WorkSpaceBase } from "@WorkSpace/controller/work.space.base";
 import { WorkSpaceRead } from "@WorkSpace/models/crud/work.space.read";
 
-
 export class WorkSpaceEditService extends WorkSpaceBase {
 
   getSession = true;

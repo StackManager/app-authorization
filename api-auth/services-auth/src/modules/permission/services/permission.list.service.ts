@@ -29,7 +29,7 @@ export class PermissionListService extends PermissionBase {
     if (name) list.filter.name(name);
     if (status) list.filter.status(status);
     if (deleted) list.filter.deleted(deleted);
-
+    list.filter.workSpaceId(workSpaceId);
     const result = await list.paginate({
       page,
       limit: pageSize,

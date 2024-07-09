@@ -5,6 +5,7 @@ import {
 } from './interface/permissionschema.interface';
 import { PermissionMiddleware } from './middleware/permission.middleware';
 import paginate from 'mongoose-paginate-v2';
+import { SCHEMAWORKSPACE } from '@WorkSpace/models/interface/work.space.schema.interface';
 
 const permissionSchema = new mongoose.Schema<PermissionDoc>({
   name: {
@@ -24,7 +25,12 @@ const permissionSchema = new mongoose.Schema<PermissionDoc>({
   deleted: { 
     type: Boolean, 
     default: false 
-  }
+  },
+  workSpaceId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: SCHEMAWORKSPACE, 
+    required: true 
+  },
 });
 
 PermissionMiddleware.validate(permissionSchema);

@@ -32,6 +32,6 @@ export class PermissionEditService extends PermissionBase {
     //Save and validate the changes
     await doc.save();
     // Response 
-    this.res.status(200).json({name: doc.name, status: doc.status});
+    this.res.status(200).json({name: doc.name, slug: doc.slug,  status: doc.status});
   }
 }

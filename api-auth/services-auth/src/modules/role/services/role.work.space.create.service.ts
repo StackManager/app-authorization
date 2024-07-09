@@ -1,7 +1,6 @@
 import { RoleBase } from "@Role/controller/role.base";
 import { RoleData } from "@Role/models/data/role.data";
-import { WorkSpace } from "@WorkSpace/models/work.space.model";
-
+import { Role } from "@Role/models/role.model";
 
 export class RoleWorkSpaceCreateService extends RoleBase {
 
@@ -23,7 +22,7 @@ export class RoleWorkSpaceCreateService extends RoleBase {
     // TODO: Validar que el usuario tenga permisos para crear en este workspaceID
     // TODO: Validar que el lugar desde donde se crea sea valido, el origin o IP
 
-    const doc = new WorkSpace ({
+    const doc = new Role ({
       name,
       slug: validate.getSlug(),
       workSpaceId,
