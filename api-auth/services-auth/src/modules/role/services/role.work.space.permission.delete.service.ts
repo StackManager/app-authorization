@@ -1,40 +1,41 @@
-import { PermissionData } from "@Permission/models/data/permission.data";
+import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
+import { GenericError } from "@Commons/errors/factory/generic.error";
+import { RolePermissionAssociation } from "@Role/class/role.permission.assoation";
 import { RoleBase } from "@Role/controller/role.base";
-import { RoleRead } from "@Role/models/crud/role.read";
-import { RoleData } from "@Role/models/data/role.data";
 
 export class RoleWorkSpacePermissionDeleteService extends RoleBase {
 
   getSession = true;
   permissionService =  ["role_work_space_permission_delete"]
-  read: RoleRead = new RoleRead();
+
 
   async run() {
+
     //Get the id params
     const {roleId, permissionId} = this.req.params;
+    const getAssociation = new RolePermissionAssociation()
+    const {roleDoc, permissionDoc} = await getAssociation.getValid({roleId, permissionId})
 
-    //Validamos los datos que proceden del request
-    const validateRole = new RoleData()
-    validateRole.setId(roleId);
-
-    //Validamos los datos que proceden del request
-    const validatePerm = new PermissionData()
-    validatePerm.setId(permissionId);
-
-    // TODO: Validar que el usuario tenga permisos para crear en este workspaceID
-    //Get the instance with read
-    const doc = await this.read.getById(validateRole.getId());
-    //Update status
-    
-    // Actualizar los permisos del documento
-    const filter = doc.permissions.filter((perm) => 
-      perm.toString() !== permissionId
+    //Update
+    const filter = roleDoc.permissions.filter((perm) => 
+      perm.toString() !== permissionDoc._id.toString()
     );
-    doc.permissions = filter;
+
+    // Check if the filter is empty and throw an exception if it is
+    if (filter.length == roleDoc.permissions.length) {
+      throw new GenericError([{
+        message: 'Permission no found',
+        field: 'permission',
+        detail: 'Permission no found',
+        code: MODELERRORTEXTTYPE.is_value_duplicated
+      }]);
+    }
+
+    roleDoc.permissions = filter;
 
     //Save and validate the changes
-    await doc.save();
+    await roleDoc.save();
     // Response 
-    this.res.status(200).json({name: doc.name, status: doc.status});
+    this.res.status(200).json({role: roleDoc.name, permission:  permissionDoc.name });
   }
 }

@@ -34,7 +34,6 @@ export class AuthentificationCreateRole extends AuthentificationBase {
 
     await workSpaceDoc.save();
 
-    
     const workSpaceDocI = new WorkSpace ({
       name: "Authentification system",
       description:"Authentification system",
@@ -63,15 +62,17 @@ export class AuthentificationCreateRole extends AuthentificationBase {
       "role_work_space_deleted",
       "role_work_space_edit",
       'role_work_space_list',
-      "role_work_space_update_status"
+      "role_work_space_update_status",
+      "role_work_space_permission_add",
+      "role_work_space_permission_delete"
     ];
 
     names.forEach(async (name) => {
-      const doc = new Permission({ name, slug: name, status: true });
+      const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDoc._id });
       permission.push(doc._id);
       await doc.save();
     });
-    
+
     //CREATE ROLES
     const roleI = new Role ({
       name: "Admin",
