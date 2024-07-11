@@ -26,7 +26,8 @@ export class RoleWorkSpaceCreateService extends RoleBase {
       name,
       slug: validate.getSlug(),
       workSpaceId,
-      status: true
+      status: true,
+      default: false
     });
     
     await doc.save();

@@ -19,6 +19,10 @@ const roleSchema = new mongoose.Schema<RoleDoc>({
     required: true,
     unique: true,
   },
+  default: { 
+    type: Boolean, 
+    default: false 
+  },
   status: { 
     type: Boolean, 
     default: false 

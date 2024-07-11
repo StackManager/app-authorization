@@ -28,8 +28,18 @@ export class RoleFilter {
     this.filterManager.addFilter(filter);
   }
 
+  slug(value: any): void {
+    const filter: FilterOptions = { value, key: 'slug', type: 'regex-equal' };
+    this.filterManager.addFilter(filter);
+  }
+
   status(deleted: any): void{
     const filter: FilterOptions =  { value: deleted, key: "status" };
+    this.filterManager.addFilter(filter);
+  }
+
+  default(deleted: any): void{
+    const filter: FilterOptions =  { value: deleted, key: "default" };
     this.filterManager.addFilter(filter);
   }
 

@@ -36,6 +36,10 @@ const workSpacesSchema = new mongoose.Schema<WorkSpacesAttrs>({
     type: Number, 
     default: 0 
   },
+  registeredEmail: {
+    type: Boolean, 
+    default: false 
+  },
   status: { 
     type: Boolean, 
     default: false 

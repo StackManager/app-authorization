@@ -8,6 +8,7 @@ export const SCHEMAAUTHENTIFICATION = 'authentification.users'
 export interface WorkSpacesAttrs {
 
   password: string; // El password asociado al dominio
+  registeredEmail?: boolean; // Si fue registrado el email de la cuenta asociado a este dominio
   status?: boolean; // El status de la cuenta asociado a este dominio
   session?: string; // El ultimo token session generado para este dominio
   

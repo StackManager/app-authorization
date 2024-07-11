@@ -39,7 +39,8 @@ export class AuthentificationRegisterService extends AuthentificationBase {
       attemptsTokenActivationAccount: 0,
       attemptsPasswordReset: 0,
       attemptsLogin: 0,
-      roleIds: []
+      roleIds: [],
+      status: true
     });
     authDoc.save()
   }
@@ -59,7 +60,8 @@ export class AuthentificationRegisterService extends AuthentificationBase {
         tokenActivationAccount: generateRandomToken(6),
         attemptsTokenActivationAccount: 0,
         attemptsPasswordReset: 0,
-        attemptsLogin: 0
+        attemptsLogin: 0,
+        status: true
       }] 
     });
     await authDoc.save();

@@ -2,6 +2,8 @@
 
 Welcome to the Project Payment! This document provides instructions on using Docker Compose for building images, running tests, and additional resources.
 
+# Enviar los emails de authentificacion
+
 ## 1. Build project
 
 ### Clonning and Building

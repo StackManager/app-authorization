@@ -1,5 +1,6 @@
 
 import { RoleWorkSpaceCreateService } from '@Role/services/role.work.space.create.service';
+import { RoleWorkSpaceDefaultRegisterService } from '@Role/services/role.work.space.default.register.service';
 import { RoleWorkSpaceDeletedService } from '@Role/services/role.work.space.delete.service';
 import { RoleWorkSpaceEditService } from '@Role/services/role.work.space.edit.service';
 import { RoleWorkSpaceListService } from '@Role/services/role.work.space.list.service';
@@ -37,6 +38,14 @@ routers.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 // Ruta GET para cambiar el estatus de este elemento
 routers.patch('/:id/status', async (req: Request, res: Response, next: NextFunction) => {
   const exec = new RoleWorkSpaceStatusService(req, res, next);
+  await exec.handleAsync(async () => {
+    await exec.run();
+  });  
+});
+
+// Ruta GET asignar o desasignar si un role es default
+routers.patch('/:id/default', async (req: Request, res: Response, next: NextFunction) => {
+  const exec = new RoleWorkSpaceDefaultRegisterService(req, res, next);
   await exec.handleAsync(async () => {
     await exec.run();
   });  

@@ -1,15 +1,9 @@
 import { AuthentificationBase } from "@Authentification/controller/authentification.base";
-import { Authentification } from "@Authentification/models/authentification.model";
-import { AuthentificationData } from "@Authentification/models/data/authentification.data";
 import { AuthentificationDoc } from "@Authentification/models/interface/authentification.schema.interface";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
-import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
-import { JWT } from "@Commons/session/jwt.session";
 import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
 import { WorkSpaceData } from "@WorkSpace/models/data/work.space.data";
 import { WorkSpaceDoc } from "@WorkSpace/models/interface/work.space.schema.interface";
-import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
-
 
 interface AuthentificationLoginAttrs{
   authDoc: AuthentificationDoc,

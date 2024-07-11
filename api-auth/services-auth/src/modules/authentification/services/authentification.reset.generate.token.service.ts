@@ -3,11 +3,8 @@ import { AuthentificationData } from "@Authentification/models/data/authentifica
 import { AuthentificationDoc } from "@Authentification/models/interface/authentification.schema.interface";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
-import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
-import { GenericError } from "@Commons/errors/factory/generic.error";
 import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
-import { WorkSpaceData } from "@WorkSpace/models/data/work.space.data";
-import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
+
 
 interface AuthentificationGenerateTokenAttrs{
   authDoc: AuthentificationDoc,
@@ -33,16 +30,6 @@ export class AuthentificationPassworResetGenerateToken extends AuthentificationB
       if (authDoc.workSpaces[index].tokenPasswordReset == "") {
         authDoc.workSpaces[index].tokenPasswordReset = '123456'
         await authDoc.save();
-      }else{
-        authDoc.workSpaces[index].attemptsPasswordReset = authDoc.workSpaces[index].attemptsPasswordReset + 1
-        await authDoc.save();
-        //Sent Generic error
-        throw new GenericError([{
-          message: 'Token is already assigned',
-          field: 'token',
-          detail: 'Token is already assigned',
-          code: MODELERRORTEXTTYPE.is_invalid
-        }]);
       }
   }
 
@@ -70,7 +57,11 @@ export class AuthentificationPassworResetGenerateToken extends AuthentificationB
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()
     const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
-
+    userInWorkspace.isAvailableBlocked({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableRegisteredEmail({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableStatus({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableDeleted({authDoc, index, workSpaceDoc})
+    
     await this.authentificationGenerateTokenReset({ authDoc, index })
     this.res.status(200).json({ success: true, email });
   }

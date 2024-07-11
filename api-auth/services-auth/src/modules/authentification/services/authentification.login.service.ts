@@ -1,15 +1,11 @@
 import { AuthentificationBase } from "@Authentification/controller/authentification.base";
-import { Authentification } from "@Authentification/models/authentification.model";
 import { AuthentificationData } from "@Authentification/models/data/authentification.data";
 import { AuthentificationDoc } from "@Authentification/models/interface/authentification.schema.interface";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
-import { JWT } from "@Commons/session/jwt.session";
 import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
-import { WorkSpaceData } from "@WorkSpace/models/data/work.space.data";
 import { WorkSpaceDoc } from "@WorkSpace/models/interface/work.space.schema.interface";
-import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
-
+import { JWT } from "@Commons/session/jwt.session";
 
 interface AuthentificationLoginAttrs{
   authDoc: AuthentificationDoc,
@@ -30,7 +26,11 @@ export class AuthentificationLoginService extends AuthentificationBase {
       workSpaceId: workSpaceDoc._id
     };
 
-    return JWT.sign({ payload, keySecret: workSpaceDoc.keySecret })
+    return JWT.sign({ 
+      payload, 
+      keySecret: workSpaceDoc.keySecret, 
+      sessionTime: workSpaceDoc.sessionTime 
+    })
 
   }
 
@@ -43,7 +43,8 @@ export class AuthentificationLoginService extends AuthentificationBase {
       email,
       password
     } = this.req.body;
-  
+    
+
     const workSpaceFromHeader  = new WorkSpaceFromHeader()
     const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
 
@@ -59,9 +60,16 @@ export class AuthentificationLoginService extends AuthentificationBase {
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()
     const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
-    //Valida que el password coincida con el enviado
-    await userInWorkspace.validatePasswordOrFail({authDoc, index, password });
 
+    // Valida la accesibilidad
+    userInWorkspace.isAvailableBlocked({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableRegisteredEmail({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableStatus({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableDeleted({authDoc, index, workSpaceDoc})
+    
+    //Valida que el password coincida con el enviado
+    await userInWorkspace.validatePasswordOrFail({authDoc, workSpaceDoc, index, password });
+    
     const token = this.authentificationLogin({ authDoc,  workSpaceDoc })
     this.res.status(200).json({ success: true, email, token });
   }

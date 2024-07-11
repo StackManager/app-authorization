@@ -35,7 +35,7 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     await workSpaceDoc.save();
 
     const workSpaceDocI = new WorkSpace ({
-      name: "Authentification system",
+      name: "Authentification system II",
       description:"Authentification system",
       domain: "localhosts.com",
       keySecret: SYSTEM_KEY_PRIVATE+"178923",
@@ -64,10 +64,12 @@ export class AuthentificationCreateRole extends AuthentificationBase {
       'role_work_space_list',
       "role_work_space_update_status",
       "role_work_space_permission_add",
-      "role_work_space_permission_delete"
+      "role_work_space_permission_delete",
+      "role_work_space_default_register"
     ];
 
     names.forEach(async (name) => {
+      console.log("--", name)
       const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDoc._id });
       permission.push(doc._id);
       await doc.save();
@@ -105,7 +107,8 @@ export class AuthentificationCreateRole extends AuthentificationBase {
         attemptsTokenActivationAccount: 0,
         attemptsPasswordReset: 0,
         attemptsLogin: 0,
-        status: true
+        status: true,
+        registeredEmail: true
       }]
     });
     await authDoc.save()
@@ -120,7 +123,8 @@ export class AuthentificationCreateRole extends AuthentificationBase {
         attemptsTokenActivationAccount: 0,
         attemptsPasswordReset: 0,
         attemptsLogin: 0,
-        status: true
+        status: true,
+        registeredEmail: true
       }] 
     });
     await authDocII.save()

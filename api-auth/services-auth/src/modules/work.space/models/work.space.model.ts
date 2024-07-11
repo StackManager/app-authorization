@@ -35,12 +35,33 @@ const workSpaceSchema = new mongoose.Schema<WorkSpaceDoc>({
     max: 10 
   },
 
-  // sessionTime:{
-  //   type: Number,
-  //   default: 1,
-  //   min: 1,
-  //   max: 1440
-  // },
+  minutesBlockedByMaxAttemptsLogin:{
+    type: Number, 
+    default: 60,
+    min: 5, 
+    max: 14400 
+  },
+
+  minutesBlockedByMaxAttemptsTokenActivationAccount:{
+    type: Number, 
+    default: 60,
+    min: 5, 
+    max: 14400 
+  },
+
+  minutesBlockedByMaxAttemptsPasswordReset:{
+    type: Number, 
+    default: 60,
+    min: 5, 
+    max: 14400 
+  },
+
+  sessionTime:{
+    type: Number,
+    default: 60,
+    min: 1,
+    max: 14400
+  },
 
   keySecret: {
     type: String,  

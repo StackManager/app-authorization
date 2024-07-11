@@ -7,8 +7,14 @@ export class RoleMiddleware {
     schema.pre('validate', async function (next) {
 
       const myValidate = new MyValidate()
-      if (this.isNew || this.isModified('permissions')) myValidate.workSpaceNoRepeatPermission(this.permissions)
-        
+      if (this.isNew || this.isModified('permissions')) {
+        myValidate.workSpaceNoRepeatPermission(this.permissions)
+      }
+
+      if (this.isNew){
+        await myValidate.workSpaceNoRepeatSlug(this.slug, this.workSpaceId)
+      } 
+
       next();
     });
   }

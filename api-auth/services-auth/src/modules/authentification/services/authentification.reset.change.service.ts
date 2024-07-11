@@ -1,67 +1,15 @@
 import { AuthentificationBase } from "@Authentification/controller/authentification.base";
-import { Authentification } from "@Authentification/models/authentification.model";
 import { AuthentificationData } from "@Authentification/models/data/authentification.data";
 import { WorkSpacesData } from "@Authentification/models/data/work.spaces.data";
-import { AuthentificationDoc } from "@Authentification/models/interface/authentification.schema.interface";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
-import { MODELERRORTEXTTYPE } from "@Commons/errors/error.types";
-import { GenericError } from "@Commons/errors/factory/generic.error";
-import { Encrypt } from "@Commons/functions/encrypt";
 import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
-import { WorkSpaceExist } from "@WorkSpace/validations/work.space.exist.validation";
-
-
-interface AuthentificationValidateTokenAttrs{
-  authDoc: AuthentificationDoc,
-  index: number,
-  tokenPasswordReset: string,
-  password: string
-}
 
 
 export class AuthentificationPassworResetChange extends AuthentificationBase {
 
   getSession = false;
   permissionService =  ["authentification_reset_change"]
-
-  /**
-   * Validates the token for user authentication, and reset the passwork
-   *
-   * @param {Object} params - The parameters for the function.
-   * @param {Object} params.authDoc - The document associated with the user's registration.
-   * @param {Object} params.index - Index workspace to make the changes.
-   * @param {string} params.tokenPasswordReset - The token sent from the client.
-   * @param {string} params.password - New password sent from the client.
-   * @throws {GenericError} Throws an error if the token is invalid or if the user is not registered with the workspace.
-   */
-  async authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, password }: AuthentificationValidateTokenAttrs) {
-
-    // If an index exists, then check if the tokens match
-    if (authDoc?.workSpaces[index]?.tokenPasswordReset === tokenPasswordReset &&
-      authDoc?.workSpaces[index]?.tokenPasswordReset != ""
-    ) {
-      //Reset the passwork and activate the account
-      const passwordEncript = await Encrypt.toHash(password)
-      authDoc.workSpaces[index].password = passwordEncript;
-      authDoc.workSpaces[index].status = true;
-      authDoc.workSpaces[index].attemptsPasswordReset = 0;
-      authDoc.workSpaces[index].attemptsTokenActivationAccount = 0;
-      authDoc.workSpaces[index].attemptsLogin = 0;
-      authDoc.workSpaces[index].tokenPasswordReset = "";
-      await authDoc.save();
-    } else {
-      authDoc.workSpaces[index].attemptsPasswordReset = authDoc.workSpaces[index].attemptsPasswordReset + 1
-      await authDoc.save();
-      //Sent Generic error
-      throw new GenericError([{
-        message: 'Token to reset password is not valid',
-        field: 'token',
-        detail: 'Token to reset password is not valid',
-        code: MODELERRORTEXTTYPE.is_invalid
-      }]);
-    }
-  }
 
   /**
    *  Metodo inicial para ejecutar la clase completa
@@ -93,8 +41,11 @@ export class AuthentificationPassworResetChange extends AuthentificationBase {
     //Valida que exista un workSpaceValido registrado para este usuario
     const userInWorkspace = new UserFindWorkspace()
     const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
-
-    await this.authentificationValidateTokenReset({ authDoc, index, tokenPasswordReset, password })
+    userInWorkspace.isAvailableBlocked({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableRegisteredEmail({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableStatus({authDoc, index, workSpaceDoc})
+    userInWorkspace.isAvailableDeleted({authDoc, index, workSpaceDoc})
+    await userInWorkspace.validateTokenResetOrFail({ authDoc, index, tokenPasswordReset, password, workSpaceDoc })
     this.res.status(200).json({ success: true, email});
   }
 }
