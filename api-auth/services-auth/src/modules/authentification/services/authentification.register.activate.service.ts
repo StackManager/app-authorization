@@ -2,6 +2,7 @@ import { AuthentificationBase } from "@Authentification/controller/authentificat
 import { AuthentificationData } from "@Authentification/models/data/authentification.data";
 import { UserExist } from "@Authentification/validations/user.exist.validation";
 import { UserFindWorkspace } from "@Authentification/validations/user.find.wordspace";
+import { authServiceExternal } from "@Commons/microservices/authentification/external/authentification.login";
 import { WorkSpaceFromHeader } from "@WorkSpace/classes/get.work.space.header";
 
 export class AuthentificationRegisterActivateService extends AuthentificationBase {
@@ -18,7 +19,7 @@ export class AuthentificationRegisterActivateService extends AuthentificationBas
       email,
       tokenActivationAccount
     } = this.req.body;
-  
+
     //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
     const validateAuth = new AuthentificationData()
     validateAuth.setEmail(email);

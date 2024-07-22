@@ -6,7 +6,6 @@ import { lettersAndSpacesRegex } from '@Commons/constants/regex';
 import { ValidateObjectId } from '@Commons/validator/object.id.validator';
 import { generateSlug } from '@Commons/format/string';
 import { DataBase } from '@Commons/data/data.base';
-import { ValidateBoolean } from '@Commons/validator/boolean.validator';
 
 export class RoleData extends DataBase{
   name: string = '';

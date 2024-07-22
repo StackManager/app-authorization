@@ -45,6 +45,65 @@ export class AuthentificationCreateRole extends AuthentificationBase {
 
     await workSpaceDocI.save();
 
+
+    const workSpaceDocII = new WorkSpace ({
+      name: "Email Manager",
+      description:"Manejador de correos electronicos",
+      domain: "authentification.com",
+      keySecret: "E[6X:[a(m%(M2J)%(*m^k=3*NP4AJQ.gNc2+A<[c+e%k<)",
+      keyPublic: "n]XB[}5yJS@QzP@ymNx1C)8KSWfAUCV68N8!4h%x<l+o(X",
+      status: true
+    });
+
+    await workSpaceDocII.save();
+
+    //CREATE PERMISSIONS
+    const permissionEmail: Schema.Types.ObjectId[] = [];
+    const namesEmail = [
+      "word_space_email_create", 
+      "work_space_email_deleted", 
+      "word_space_email_edit", 
+      "work_space_email_list", 
+      "work_space_email_update_status",
+      "email_schedule_create",
+      "email_schedule_delete",
+      "email_schedule_list"
+    ];
+
+    namesEmail.forEach(async (name) => {
+      const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDocII._id });
+      permissionEmail.push(doc._id);
+      await doc.save();
+    });
+
+    //CREATE ROLES
+    const roleEmail = new Role ({
+      name: "AdminEmail",
+      slug: "AdminEmail",
+      workSpaceId: workSpaceDocII._id,
+      permissions: permissionEmail,
+      status: true
+    });
+    await roleEmail.save();
+
+    const passwordEncriptEmail = await Encrypt.toHash("Angel1986*")
+    const authDocEmail = new Authentification({ 
+      email: "angel@gmail.com",
+      workSpaces: [{ 
+        roleIds: [roleEmail._id],
+        workSpaceId: workSpaceDocII._id,
+        password: passwordEncriptEmail,
+        tokenActivationAccount: "1234",
+        attemptsTokenActivationAccount: 0,
+        attemptsPasswordReset: 0,
+        attemptsLogin: 0,
+        status: true,
+        registeredEmail: true
+      }]
+    });
+    await authDocEmail.save()
+
+
     //CREATE PERMISSIONS
     const permission: Schema.Types.ObjectId[] = [];
     const names = [
@@ -69,7 +128,6 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     ];
 
     names.forEach(async (name) => {
-      console.log("--", name)
       const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDoc._id });
       permission.push(doc._id);
       await doc.save();

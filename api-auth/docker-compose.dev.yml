@@ -13,6 +13,8 @@ services:
       - 27018:27017
     volumes:
       - mongodb_data_container_auth:/data/db
+    networks:
+      - my_network
 
   service_node_auth:
     build:
@@ -33,6 +35,8 @@ services:
     command: npm run dev
     depends_on:
       - service_mongo_auth
+    networks:
+      - my_network
 
   mongo_express_auth:
     image: mongo-express
@@ -47,6 +51,12 @@ services:
       - 8081:8081
     depends_on:
       - service_mongo_auth
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    external: true
 
 volumes:
   mongodb_data_container_auth:

@@ -2,13 +2,20 @@ import {app} from './app'
 import { Connection } from 'mongoose';
 import { RouteController } from '@Commons/routes/routes.controller';
 import { DatabaseDataTrasacctional } from '@DB/database.transactional.connect';
+import { MICROS } from '@Commons/microservices/authentification/external/authentification.login';
 
 
 // Declara dbtc como una variable global
 declare global {
   var dbtc: Connection;
-  //var dbec: Connection;
+  var token: any;
  }
+
+ // Initialize token object
+globalThis.token = {
+  [MICROS.AUTHENTIFICATION]: '',
+  [MICROS.EMAIL]: ''
+};
  
 const start = async () => {
  

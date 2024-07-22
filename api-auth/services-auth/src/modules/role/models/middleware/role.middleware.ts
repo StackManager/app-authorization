@@ -11,7 +11,7 @@ export class RoleMiddleware {
         myValidate.workSpaceNoRepeatPermission(this.permissions)
       }
 
-      if (this.isNew){
+      if (this.isNew || this.isModified('slug')){
         await myValidate.workSpaceNoRepeatSlug(this.slug, this.workSpaceId)
       } 
 

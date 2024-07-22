@@ -4,7 +4,7 @@ import { NotAuthorizedError } from "@Commons/errors/factory/authorized.error";
 
 
 interface GetPermissionsByEmailAndWorkSpaceIdAttrs{
-  _id: string,
+  authId: string,
   workSpaceId: string
 }
 
@@ -13,12 +13,12 @@ interface GetPermissionsByEmailAndWorkSpaceId{
   permissions: string[]
 }
 
-export async function getPermissionsByEmailAndWorkSpaceId({ _id, workSpaceId }: GetPermissionsByEmailAndWorkSpaceIdAttrs ): Promise<GetPermissionsByEmailAndWorkSpaceId> {
+export async function getPermissionsByEmailAndWorkSpaceId({ authId, workSpaceId }: GetPermissionsByEmailAndWorkSpaceIdAttrs ): Promise<GetPermissionsByEmailAndWorkSpaceId> {
 
   try{
-    const userId = new mongoose.Types.ObjectId(_id) 
+    const userId = new mongoose.Types.ObjectId(authId) 
     const workSpaceId_ = new mongoose.Types.ObjectId(workSpaceId)
-  
+
     const result = await Authentification.aggregate([
       { $match: { _id: userId } },
       { $unwind: '$workSpaces' },
@@ -57,7 +57,10 @@ export async function getPermissionsByEmailAndWorkSpaceId({ _id, workSpaceId }: 
 
     // Check if result is found
     if (!result || result.length === 0) {
-      throw new NotAuthorizedError("Session doesn't have permissions in WorkSpaceId");
+      return { 
+        email: '',
+        permissions: []
+      }
     }
 
     return {
@@ -66,6 +69,9 @@ export async function getPermissionsByEmailAndWorkSpaceId({ _id, workSpaceId }: 
     };
     
   }catch{
-    throw new NotAuthorizedError("Session don't have permissions in WorkSpaceId"); 
+    return { 
+      email: '',
+      permissions: []
+    }
   }
 }
