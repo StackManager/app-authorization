@@ -11,13 +11,11 @@ import { SCHEMAPERMISSION } from '@Permission/models/interface/permissionschema.
 const roleSchema = new mongoose.Schema<RoleDoc>({
   name: {
     type: String,
-    required: true,
-    unique: true,
+    required: true
   },
   slug: {
     type: String,
-    required: true,
-    unique: true,
+    required: true
   },
   default: { 
     type: Boolean, 

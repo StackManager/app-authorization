@@ -12,11 +12,14 @@ export class AuthentificationCreateRole extends AuthentificationBase {
   getSession = false;
   permissionService =  ["authentification_register"]
 
+  
+
   /**
    *  Metodo inicial para ejecutar la clase completa
    *  El controlador global se encarga de gestionar las excepciones
    */
-  async run() {
+
+  async createAuthentification (){
 
     const {
       SYSTEM_KEY_PUBLIC,
@@ -33,76 +36,6 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     });
 
     await workSpaceDoc.save();
-
-    const workSpaceDocI = new WorkSpace ({
-      name: "Authentification system II",
-      description:"Authentification system",
-      domain: "localhosts.com",
-      keySecret: SYSTEM_KEY_PRIVATE+"178923",
-      keyPublic: SYSTEM_KEY_PUBLIC+"789123",
-      status: true
-    });
-
-    await workSpaceDocI.save();
-
-
-    const workSpaceDocII = new WorkSpace ({
-      name: "Email Manager",
-      description:"Manejador de correos electronicos",
-      domain: "authentification.com",
-      keySecret: "E[6X:[a(m%(M2J)%(*m^k=3*NP4AJQ.gNc2+A<[c+e%k<)",
-      keyPublic: "n]XB[}5yJS@QzP@ymNx1C)8KSWfAUCV68N8!4h%x<l+o(X",
-      status: true
-    });
-
-    await workSpaceDocII.save();
-
-    //CREATE PERMISSIONS
-    const permissionEmail: Schema.Types.ObjectId[] = [];
-    const namesEmail = [
-      "word_space_email_create", 
-      "work_space_email_deleted", 
-      "word_space_email_edit", 
-      "work_space_email_list", 
-      "work_space_email_update_status",
-      "email_schedule_create",
-      "email_schedule_delete",
-      "email_schedule_list"
-    ];
-
-    namesEmail.forEach(async (name) => {
-      const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDocII._id });
-      permissionEmail.push(doc._id);
-      await doc.save();
-    });
-
-    //CREATE ROLES
-    const roleEmail = new Role ({
-      name: "AdminEmail",
-      slug: "AdminEmail",
-      workSpaceId: workSpaceDocII._id,
-      permissions: permissionEmail,
-      status: true
-    });
-    await roleEmail.save();
-
-    const passwordEncriptEmail = await Encrypt.toHash("Angel1986*")
-    const authDocEmail = new Authentification({ 
-      email: "angel@gmail.com",
-      workSpaces: [{ 
-        roleIds: [roleEmail._id],
-        workSpaceId: workSpaceDocII._id,
-        password: passwordEncriptEmail,
-        tokenActivationAccount: "1234",
-        attemptsTokenActivationAccount: 0,
-        attemptsPasswordReset: 0,
-        attemptsLogin: 0,
-        status: true,
-        registeredEmail: true
-      }]
-    });
-    await authDocEmail.save()
-
 
     //CREATE PERMISSIONS
     const permission: Schema.Types.ObjectId[] = [];
@@ -126,23 +59,23 @@ export class AuthentificationCreateRole extends AuthentificationBase {
       "role_work_space_permission_delete",
       "role_work_space_default_register"
     ];
-
+    
     names.forEach(async (name) => {
       const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDoc._id });
       permission.push(doc._id);
       await doc.save();
     });
-
+    
     //CREATE ROLES
-    const roleI = new Role ({
+    const role = new Role ({
       name: "Admin",
       slug: "Admin",
       workSpaceId: workSpaceDoc._id,
       permissions: permission,
       status: true
     });
-    
-    await roleI.save();
+        
+    await role.save();
 
     const roleII = new Role ({
       name: "User",
@@ -154,38 +87,168 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     
     await roleII.save();
 
-    const passwordEncript = await Encrypt.toHash("Angel1986*")
-    const authDoc = new Authentification({ 
-      email: "angel0@gmail.com", 
-      workSpaces: [{ 
-        roleIds: [roleI._id],
-        workSpaceId: workSpaceDoc._id,
-        password: passwordEncript,
-        tokenActivationAccount: "1234",
-        attemptsTokenActivationAccount: 0,
-        attemptsPasswordReset: 0,
-        attemptsLogin: 0,
-        status: true,
-        registeredEmail: true
-      }]
-    });
-    await authDoc.save()
+    return {
+      role: role._id,
+      wp: workSpaceDoc._id
+    }
 
-    const authDocII = new Authentification({ 
-      email: "angel1@gmail.com", 
-      workSpaces: [{ 
-        roleIds: [roleII._id],
-        workSpaceId: workSpaceDoc._id,
-        password: passwordEncript,
-        tokenActivationAccount: "1234",
-        attemptsTokenActivationAccount: 0,
-        attemptsPasswordReset: 0,
-        attemptsLogin: 0,
-        status: true,
-        registeredEmail: true
-      }] 
+  }
+
+  async createWorkSpaceExample(){
+
+    const {
+      SYSTEM_KEY_PUBLIC,
+      SYSTEM_KEY_PRIVATE
+    } = process.env;
+
+    const workSpaceDocI = new WorkSpace ({
+      name: "Authentification system II",
+      description:"Authentification system",
+      domain: "localhosts.com",
+      keySecret: SYSTEM_KEY_PRIVATE+"178923",
+      keyPublic: SYSTEM_KEY_PUBLIC+"789123",
+      status: true
     });
-    await authDocII.save()
+
+    await workSpaceDocI.save();
+  }
+
+
+  async createWorkSpaceEmail (){
+
+    const workSpaceDoc = new WorkSpace ({
+      name: "Email Manager",
+      description:"Manejador de correos electronicos",
+      domain: "authentification.com",
+      keySecret: "E[6X:[a(m%(M2J)%(*m^k=3*NP4AJQ.gNc2+A<[c+e%k<)",
+      keyPublic: "n]XB[}5yJS@QzP@ymNx1C)8KSWfAUCV68N8!4h%x<l+o(X",
+      status: true
+    });
+
+    await workSpaceDoc.save();
+
+    //CREATE PERMISSIONS
+    const permissionEmail: Schema.Types.ObjectId[] = [];
+    const namesEmail = [
+      "word_space_email_create", 
+      "work_space_email_deleted", 
+      "word_space_email_edit", 
+      "work_space_email_list", 
+      "work_space_email_update_status",
+      "email_schedule_create",
+      "email_schedule_delete",
+      "email_schedule_list"
+    ];
+
+    namesEmail.forEach(async (name) => {
+      const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDoc._id });
+      permissionEmail.push(doc._id);
+      await doc.save();
+    });
+
+    //CREATE ROLES
+    const role = new Role ({
+      name: "Admin",
+      slug: "Admin",
+      workSpaceId: workSpaceDoc._id,
+      permissions: permissionEmail,
+      status: true
+    });
+    await role.save();
+
+    return {
+      role: role._id,
+      wp: workSpaceDoc._id
+    }
+
+  }
+
+  async createWorkSpaceImage (){
+
+    const workSpaceDoc = new WorkSpace ({
+      name: "Images Manager",
+      description:"Manejador de imagenes",
+      domain: "imagenes.com",
+      keySecret: "E[XD:[a(5%(M2J)%(*m^k=3*N44.AJQ.gNc2+A<[c+e%k<Z",
+      keyPublic: "n]XD[}5yJ1@QzP@ymNx1C)8KSW3A.UC168N8!4h%x<l+o(Z",
+      status: true
+    });
+
+    await workSpaceDoc.save();
+
+    //CREATE PERMISSIONS
+    const permissionEmail: Schema.Types.ObjectId[] = [];
+    const namesEmail = [
+      "word_space_images_create", 
+      "work_space_images_deleted", 
+      "work_space_images_list", 
+    ];
+
+    namesEmail.forEach(async (name) => {
+      const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDoc._id });
+      permissionEmail.push(doc._id);
+      await doc.save();
+    });
+
+    //CREATE ROLES
+    const role = new Role ({
+      name: "Admin",
+      slug: "Admin",
+      workSpaceId: workSpaceDoc._id,
+      permissions: permissionEmail,
+      status: true
+    });
+    await role.save();
+
+    
+    return {
+      role: role._id,
+      wp: workSpaceDoc._id
+    }
+
+  }
+
+  async run() {
+
+    const wpAuth = await this.createAuthentification()
+    const wpAuthE = await this.createWorkSpaceExample()
+    const wpEmail = await this.createWorkSpaceEmail()
+    const wpImage = await this.createWorkSpaceImage() 
+
+    const passwordEncriptEmail = await Encrypt.toHash("Angel1986*")
+    const authenticationStandar = {
+      password: passwordEncriptEmail,
+      tokenActivationAccount: "1234",
+      attemptsTokenActivationAccount: 0,
+      attemptsPasswordReset: 0,
+      attemptsLogin: 0,
+      status: true,
+      registeredEmail: true
+    }
+
+
+    const createAuth = new Authentification({ 
+      email: "managerstack.oficial@gmail.com",
+      workSpaces: [
+      { 
+        roleIds: [wpAuth.role],
+        workSpaceId: wpAuth.wp,
+        ...authenticationStandar
+      },  
+      { 
+        roleIds: [wpEmail.role],
+        workSpaceId: wpEmail.wp,
+        ...authenticationStandar
+      },
+      { 
+        roleIds: [wpImage.role],
+        workSpaceId: wpImage.wp,
+        ...authenticationStandar
+      }
+    ]
+    });
+    await createAuth.save()
+
 
     this.res.status(201).json({ success: true });
   }
