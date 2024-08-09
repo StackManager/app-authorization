@@ -4,6 +4,12 @@ export const SCHEMAAUTHENTIFICATION = 'authentification.users'
 // export const SCHEMAROLE = "authentification.roles"
 // export const SCHEMALANGUAGE = 'configuration.languages'
 
+export interface WorkSpacesEnviromentsAttrs{
+  microWorkSpaceId: Schema.Types.ObjectId;
+  roleIds: Schema.Types.ObjectId[] | []; // Conjunto de roles que son asignados al usuario
+}
+
+
 // Define la interfaz para un dominio
 export interface WorkSpacesAttrs {
 
@@ -24,7 +30,8 @@ export interface WorkSpacesAttrs {
   deleted?: boolean; //
   workSpaceId: Schema.Types.ObjectId; //El espacio de trabajo  donde esta subscrito el usuario
   //langId: Schema.Types.ObjectId; // Lenguaje predefinido para el usuario
-  roleIds: Schema.Types.ObjectId[] | []; // Conjunto de roles que son asignados al usuario
+  
+  workSpaceEnviroments: WorkSpacesEnviromentsAttrs[] | []
 }
 
 // Define la interfaz para la autenticación

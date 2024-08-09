@@ -2,6 +2,7 @@ import { AuthentificationBase } from "@Authentification/controller/authentificat
 import { Authentification } from "@Authentification/models/authentification.model";
 import { generateSlug } from "@Commons/format/string";
 import { Encrypt } from "@Commons/functions/encrypt";
+import { MicroWorkSpace } from "@MicroWorkSpace/models/work.space.model";
 import { Permission } from "@Permission/models/permission.model";
 import { Role } from "@Role/models/role.model";
 import { WorkSpace } from "@WorkSpace/models/work.space.model";
@@ -11,8 +12,6 @@ export class AuthentificationCreateRole extends AuthentificationBase {
 
   getSession = false;
   permissionService =  ["authentification_register"]
-
-  
 
   /**
    *  Metodo inicial para ejecutar la clase completa
@@ -36,6 +35,15 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     });
 
     await workSpaceDoc.save();
+
+    const microWorkSpaceDoc = new MicroWorkSpace({
+      workSpaceId: workSpaceDoc.id,
+      name: "Authentification system Micro",
+      description:"Authentification system Micro",
+      status: true
+    });
+
+    await microWorkSpaceDoc.save();
 
     //CREATE PERMISSIONS
     const permission: Schema.Types.ObjectId[] = [];
@@ -89,7 +97,8 @@ export class AuthentificationCreateRole extends AuthentificationBase {
 
     return {
       role: role._id,
-      wp: workSpaceDoc._id
+      wp: workSpaceDoc._id,
+      mwp: microWorkSpaceDoc._id
     }
 
   }
@@ -127,6 +136,15 @@ export class AuthentificationCreateRole extends AuthentificationBase {
 
     await workSpaceDoc.save();
 
+    const microWorkSpaceDoc = new MicroWorkSpace({
+      workSpaceId: workSpaceDoc.id,
+      name: "Email Manager Micro",
+      description:"Email Manager Micro",
+      status: true
+    });
+
+    await microWorkSpaceDoc.save();
+
     //CREATE PERMISSIONS
     const permissionEmail: Schema.Types.ObjectId[] = [];
     const namesEmail = [
@@ -158,7 +176,8 @@ export class AuthentificationCreateRole extends AuthentificationBase {
 
     return {
       role: role._id,
-      wp: workSpaceDoc._id
+      wp: workSpaceDoc._id,
+      mwp: microWorkSpaceDoc._id
     }
 
   }
@@ -175,6 +194,15 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     });
 
     await workSpaceDoc.save();
+
+    const microWorkSpaceDoc = new MicroWorkSpace({
+      workSpaceId: workSpaceDoc.id,
+      name: "Images Mananger Micro",
+      description:"Images Mananger Micro",
+      status: true
+    });
+
+    await microWorkSpaceDoc.save();
 
     //CREATE PERMISSIONS
     const permissionEmail: Schema.Types.ObjectId[] = [];
@@ -203,9 +231,116 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     
     return {
       role: role._id,
-      wp: workSpaceDoc._id
+      wp: workSpaceDoc._id,
+      mwp: microWorkSpaceDoc._id
     }
+  }
 
+
+  async createWorkSpaceWebComponent (){
+
+    const workSpaceDoc = new WorkSpace ({
+      name: "Components web",
+      description:"Components web",
+      domain: "components.com",
+      keySecret: "Z[XD:[a(5%(M2J)x(*m^k=3*NX4.AJQ.gNc2+A<[c+e%k<T",
+      keyPublic: "A]XD[}5yJ1@QzP@cmNx1C)8KSX3A.UC168N8!4h%x<l+o(T",
+      status: true
+    });
+
+    await workSpaceDoc.save();
+
+
+    const microWorkSpaceDoc = new MicroWorkSpace({
+      workSpaceId: workSpaceDoc.id,
+      name: "Web Component Micro",
+      description:"Web Component Micro",
+      status: true
+    });
+
+    await microWorkSpaceDoc.save();
+
+    const microWorkSpaceDocI = new MicroWorkSpace({
+      workSpaceId: workSpaceDoc.id,
+      name: "Web page I",
+      description:"Web page I",
+      status: true
+    });
+
+    await microWorkSpaceDocI.save();
+
+    const microWorkSpaceDocII = new MicroWorkSpace({
+      workSpaceId: workSpaceDoc.id,
+      name: "Web page II",
+      description:"Web page II",
+      status: true
+    });
+
+    await microWorkSpaceDocII.save();
+
+    //CREATE PERMISSIONS
+    const permissionAdmin: Schema.Types.ObjectId[] = [];
+    const permissionUser: Schema.Types.ObjectId[] = [];
+    const namesPermissions = [
+      "web_component_list",
+      "web_component_edit",
+      "web_component_create",
+      "web_component_status", 
+      "web_component_deleted",
+      "web_component_structure_add",
+      "web_component_structure_deleted",
+      "work_space_component_create",
+      "work_space_component_delete",
+      "work_space_component_list",
+      "work_space_component_status",
+      "work_space_page_list",
+      "work_space_page_create",
+      "work_space_page_deleted",
+      "work_space_page_status",
+      "work_space_main_create",
+      "work_space_main_deleted",
+      "work_space_main_edit",
+      "web_component_main_element_add",
+      "web_component_main_element_deleted",
+      "work_space_main_list",
+      "work_space_main_status"
+    ];
+
+    namesPermissions.forEach(async (name, index) => {
+      const doc = new Permission({ name, slug: name, status: true, workSpaceId: workSpaceDoc._id });
+      permissionAdmin.push(doc._id);
+      if (index > 6) permissionUser.push(doc._id)
+      await doc.save();
+    });
+
+    //CREATE ROLES
+    const role = new Role ({
+      name: "Admin",
+      slug: "Admin",
+      workSpaceId: workSpaceDoc._id,
+      permissions: permissionAdmin,
+      status: true
+    });
+    await role.save();
+
+    //CREATE ROLES
+    const roleManager = new Role ({
+      name: "Manager",
+      slug: "Manager",
+      workSpaceId: workSpaceDoc._id,
+      permissions: permissionUser,
+      status: true
+    });
+    await roleManager.save();
+    
+    return {
+      roleAdmin: role._id,
+      roleManager: roleManager._id,
+      wp: workSpaceDoc._id,
+      mwp: microWorkSpaceDoc._id,
+      mwpI: microWorkSpaceDocI._id,
+      mwpII: microWorkSpaceDocII._id
+    }
   }
 
   async run() {
@@ -214,6 +349,7 @@ export class AuthentificationCreateRole extends AuthentificationBase {
     const wpAuthE = await this.createWorkSpaceExample()
     const wpEmail = await this.createWorkSpaceEmail()
     const wpImage = await this.createWorkSpaceImage() 
+    const wpComponent = await this.createWorkSpaceWebComponent()
 
     const passwordEncriptEmail = await Encrypt.toHash("Angel1986*")
     const authenticationStandar = {
@@ -226,23 +362,53 @@ export class AuthentificationCreateRole extends AuthentificationBase {
       registeredEmail: true
     }
 
-
     const createAuth = new Authentification({ 
       email: "managerstack.oficial@gmail.com",
       workSpaces: [
       { 
-        roleIds: [wpAuth.role],
+        workSpaceEnviroments:[{
+          microWorkSpaceId: wpAuth.mwp,
+          roleIds: [wpAuth.role]
+        } 
+      ],
         workSpaceId: wpAuth.wp,
         ...authenticationStandar
       },  
       { 
-        roleIds: [wpEmail.role],
+        workSpaceEnviroments:[{
+            microWorkSpaceId: wpEmail.mwp,
+            roleIds: [wpEmail.role]
+          } 
+        ],
         workSpaceId: wpEmail.wp,
         ...authenticationStandar
       },
       { 
+        workSpaceEnviroments:[{
+            microWorkSpaceId: wpImage.mwp,
+            roleIds: [wpImage.role]
+          } 
+        ],
         roleIds: [wpImage.role],
         workSpaceId: wpImage.wp,
+        ...authenticationStandar
+      },
+      { 
+        workSpaceEnviroments:[
+          {
+            microWorkSpaceId: wpComponent.mwp,
+            roleIds: [wpComponent.roleAdmin]
+          },
+          {
+            microWorkSpaceId: wpComponent.mwpI,
+            roleIds: [wpComponent.roleManager]
+          },
+          {
+            microWorkSpaceId: wpComponent.mwpII,
+            roleIds: [wpComponent.roleManager]
+          }
+        ],
+        workSpaceId: wpComponent.wp,
         ...authenticationStandar
       }
     ]

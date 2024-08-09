@@ -25,20 +25,21 @@ export class AuthentificationLoginService extends AuthentificationBase {
       authId: authDoc._id.toString(),
       workSpaceId: workSpaceDoc._id.toString(),
     })
-    
+
     // Aquí generamos el token JWT
     const payload = {
       id: authDoc.id,
       email: authDoc.email,
       keyPublic: workSpaceDoc.keyPublic,
       workSpaceId: workSpaceDoc._id,
-      permissions: userPermissions.permissions || [],
+      workspaces: userPermissions.workspaces,
+      permissions: userPermissions.permissions
     };
 
     return JWT.sign({ 
-      payload,
-      keySecret: workSpaceDoc.keySecret,
-      sessionTime: workSpaceDoc.sessionTime
+       payload,
+       keySecret: workSpaceDoc.keySecret,
+       sessionTime: workSpaceDoc.sessionTime
     })
 
   }
@@ -80,7 +81,7 @@ export class AuthentificationLoginService extends AuthentificationBase {
     await userInWorkspace.validatePasswordOrFail({authDoc, workSpaceDoc, index, password });
     //console.log(7, "AuthentificationLoginService")
     
-    const token = await this.authentificationLogin({ authDoc,  workSpaceDoc })
+    const token = await this.authentificationLogin({ authDoc,  workSpaceDoc }) 
     this.res.status(200).json({ success: true, email, token });
   }
 }

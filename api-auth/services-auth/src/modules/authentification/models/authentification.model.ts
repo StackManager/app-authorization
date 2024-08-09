@@ -57,11 +57,19 @@ const workSpacesSchema = new mongoose.Schema<WorkSpacesAttrs>({
     ref: SCHEMAWORKSPACE, 
     required: true 
   },
-  roleIds: [{
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: SCHEMAROLE, 
-    default:[]
-  }]
+  workSpaceEnviroments: [{
+    microWorkSpaceId: {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: SCHEMAROLE, 
+      default:[]
+    },
+    roleIds: [{
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: SCHEMAROLE, 
+      default:[]
+    }]
+  }],
+
   // langId: { 
   //   type: mongoose.Schema.Types.ObjectId, 
   //   ref: SCHEMALANGUAGE, 

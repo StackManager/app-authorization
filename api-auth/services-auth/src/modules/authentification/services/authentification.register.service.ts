@@ -30,22 +30,22 @@ export class AuthentificationRegisterService extends AuthentificationBase {
   //Anade un nuevo password, y configuracion a un email ya creado
   async authentificationAddProfile({ authDoc, workSpaceId, password, token }: AuthentificationAddProfileAttrs) {
 
-    //Validamos que el espacio de trabajo no este asociado al email
-    const userInWorkspace = new UserFindWorkspace()
-    userInWorkspace.validateWorkSpaceNoExistOrFail({ workSpaces: authDoc.workSpaces, workSpaceId });
-    const passwordEncript = await Encrypt.toHash(password)
-    //Registra la nueva configuracion, con la cuenta desactivada
-    authDoc.workSpaces.push({
-      workSpaceId, 
-      password: passwordEncript,
-      tokenActivationAccount: token,
-      attemptsTokenActivationAccount: 0,
-      attemptsPasswordReset: 0,
-      attemptsLogin: 0,
-      roleIds: [],
-      status: true
-    });
-    authDoc.save()
+    // //Validamos que el espacio de trabajo no este asociado al email
+    // const userInWorkspace = new UserFindWorkspace()
+    // userInWorkspace.validateWorkSpaceNoExistOrFail({ workSpaces: authDoc.workSpaces, workSpaceId });
+    // const passwordEncript = await Encrypt.toHash(password)
+    // //Registra la nueva configuracion, con la cuenta desactivada
+    // authDoc.workSpaces.push({
+    //   workSpaceId, 
+    //   password: passwordEncript,
+    //   tokenActivationAccount: token,
+    //   attemptsTokenActivationAccount: 0,
+    //   attemptsPasswordReset: 0,
+    //   attemptsLogin: 0,
+    //   roleIds: [],
+    //   status: true
+    // });
+    // authDoc.save()
   }
   
   //Crea el perfil completo del usuario 
@@ -55,20 +55,20 @@ export class AuthentificationRegisterService extends AuthentificationBase {
     password,
     token
   }: AuthentificationCreateProfileAttrs){
-    const passwordEncript = await Encrypt.toHash(password)
-    const authDoc = new Authentification({ 
-      email, 
-      workSpaces: [{ 
-        workSpaceId, 
-        password: passwordEncript,
-        tokenActivationAccount: token,
-        attemptsTokenActivationAccount: 0,
-        attemptsPasswordReset: 0,
-        attemptsLogin: 0,
-        status: true
-      }] 
-    });
-    await authDoc.save();
+    // const passwordEncript = await Encrypt.toHash(password)
+    // const authDoc = new Authentification({ 
+    //   email, 
+    //   workSpaces: [{ 
+    //     workSpaceId, 
+    //     password: passwordEncript,
+    //     tokenActivationAccount: token,
+    //     attemptsTokenActivationAccount: 0,
+    //     attemptsPasswordReset: 0,
+    //     attemptsLogin: 0,
+    //     status: true
+    //   }] 
+    // });
+    // await authDoc.save();
   }
 
   /**
@@ -76,53 +76,53 @@ export class AuthentificationRegisterService extends AuthentificationBase {
    *  El controlador global se encarga de gestionar las excepciones
    */
   async run() {
-    const { 
-      email,
-      password
-    } = this.req.body;
+    // const { 
+    //   email,
+    //   password
+    // } = this.req.body;
 
-    //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
-    const validateAuth = new AuthentificationData()
-    validateAuth.setEmail(email);
-    validateAuth.workSpaces.setPassword(password);
+    // //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
+    // const validateAuth = new AuthentificationData()
+    // validateAuth.setEmail(email);
+    // validateAuth.workSpaces.setPassword(password);
 
-    const workSpaceFromHeader  = new WorkSpaceFromHeader()
-    const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
+    // const workSpaceFromHeader  = new WorkSpaceFromHeader()
+    // const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
   
-    //Carga el usuario y comprueba que exista el email valido
-    const userExist = new UserExist();
-    const authDoc = await userExist.validate({ email });
-    const token = generateRandomToken(6);
-    if (authDoc){
-      //Si el email existe añade solo un nuevo espacio de trabajo
-      await this.authentificationAddProfile({
-        authDoc,
-        workSpaceId: workSpaceDoc._id,
-        email,
-        password,
-        token
-      })
-    }else{
-      //Si no existe crea el perfil completo
-      await this.authentificaCreateProfile({
-        workSpaceId: workSpaceDoc._id,
-        email,
-        password,
-        token
-      })
-    }
+    // //Carga el usuario y comprueba que exista el email valido
+    // const userExist = new UserExist();
+    // const authDoc = await userExist.validate({ email });
+    // const token = generateRandomToken(6);
+    // if (authDoc){
+    //   //Si el email existe añade solo un nuevo espacio de trabajo
+    //   await this.authentificationAddProfile({
+    //     authDoc,
+    //     workSpaceId: workSpaceDoc._id,
+    //     email,
+    //     password,
+    //     token
+    //   })
+    // }else{
+    //   //Si no existe crea el perfil completo
+    //   await this.authentificaCreateProfile({
+    //     workSpaceId: workSpaceDoc._id,
+    //     email,
+    //     password,
+    //     token
+    //   })
+    // }
 
-    await emailServiceExternal.sentEmail({
-      recipient: email,
-      slug: 'correo-electronico-activar-cuenta',
-      vars: {
-        AUTHENTIFICATIONCODE: token.toString(),
-        AUTHENTIFICATIONNAME: email,
-        WORKSPACENAME: workSpaceDoc?.name
-      }
-    })
+    // await emailServiceExternal.sentEmail({
+    //   recipient: email,
+    //   slug: 'correo-electronico-activar-cuenta',
+    //   vars: {
+    //     AUTHENTIFICATIONCODE: token.toString(),
+    //     AUTHENTIFICATIONNAME: email,
+    //     WORKSPACENAME: workSpaceDoc?.name
+    //   }
+    // })
 
 
-    this.res.status(201).json({ success: true, email });
+    // this.res.status(201).json({ success: true, email });
   }
 }

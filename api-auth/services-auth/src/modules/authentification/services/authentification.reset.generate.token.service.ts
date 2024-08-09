@@ -39,30 +39,30 @@ export class AuthentificationPassworResetGenerateToken extends AuthentificationB
    */
   async run() {
 
-    const { 
-      email
-    } = this.req.body;
+    // const { 
+    //   email
+    // } = this.req.body;
 
-    //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
-    const validateAuth = new AuthentificationData()
-    validateAuth.setEmail(email);
+    // //Validamos los datos que proceden del request body, y que seran asignandos authentificacion
+    // const validateAuth = new AuthentificationData()
+    // validateAuth.setEmail(email);
 
-    const workSpaceFromHeader  = new WorkSpaceFromHeader()
-    const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
+    // const workSpaceFromHeader  = new WorkSpaceFromHeader()
+    // const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
 
-    //Comprueba que exista el email valido
-    const userExist = new UserExist();
-    const authDoc = await userExist.validateOrFail({ email });
+    // //Comprueba que exista el email valido
+    // const userExist = new UserExist();
+    // const authDoc = await userExist.validateOrFail({ email });
     
-    //Valida que exista un workSpaceValido registrado para este usuario
-    const userInWorkspace = new UserFindWorkspace()
-    const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
-    userInWorkspace.isAvailableBlocked({authDoc, index, workSpaceDoc})
-    userInWorkspace.isAvailableRegisteredEmail({authDoc, index, workSpaceDoc})
-    userInWorkspace.isAvailableStatus({authDoc, index, workSpaceDoc})
-    userInWorkspace.isAvailableDeleted({authDoc, index, workSpaceDoc})
+    // //Valida que exista un workSpaceValido registrado para este usuario
+    // const userInWorkspace = new UserFindWorkspace()
+    // const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
+    // userInWorkspace.isAvailableBlocked({authDoc, index, workSpaceDoc})
+    // userInWorkspace.isAvailableRegisteredEmail({authDoc, index, workSpaceDoc})
+    // userInWorkspace.isAvailableStatus({authDoc, index, workSpaceDoc})
+    // userInWorkspace.isAvailableDeleted({authDoc, index, workSpaceDoc})
     
-    await this.authentificationGenerateTokenReset({ authDoc, index })
-    this.res.status(200).json({ success: true, email });
+    // await this.authentificationGenerateTokenReset({ authDoc, index })
+    // this.res.status(200).json({ success: true, email });
   }
 }

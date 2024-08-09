@@ -143,7 +143,7 @@ export class UserFindWorkspace{
     const workSpaceRoles = new WorkSpaceRolesDefaults()
     const defaults = await workSpaceRoles.get({ workSpaceId: workSpaceDoc._id})
 
-    authDoc.workSpaces[index].roleIds = defaults;
+    //authDoc.workSpaces[index].roleIds = defaults;
     authDoc.workSpaces[index].registeredEmail = true;
     await authDoc.save();
 

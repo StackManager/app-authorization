@@ -20,27 +20,27 @@ export class AuthentificationWorkSpaceRolesService extends AuthentificationBase 
    *  El controlador global se encarga de gestionar las excepciones
    */
   async run() {
-    const { 
-      keyPrivate,
-      id
-    } = this.req.body;
+    // const { 
+    //   keyPrivate,
+    //   id
+    // } = this.req.body;
   
-    //Validadmos los datos que proceden del request body, y que pertenecen a workspace
-    const validateWork = new WorkSpaceData()
-    validateWork.setKeySecret(keyPrivate);
+    // //Validadmos los datos que proceden del request body, y que pertenecen a workspace
+    // const validateWork = new WorkSpaceData()
+    // validateWork.setKeySecret(keyPrivate);
 
-    const workSpaceFromHeader  = new WorkSpaceFromHeader()
-    const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
+    // const workSpaceFromHeader  = new WorkSpaceFromHeader()
+    // const workSpaceDoc = await workSpaceFromHeader.getWorkSpace(this.req)
 
-    //Comprueba que exista el email valido
-    const userExist = new UserExist();
-    const authDoc = await userExist.validateOrFail({ _id: id });
+    // //Comprueba que exista el email valido
+    // const userExist = new UserExist();
+    // const authDoc = await userExist.validateOrFail({ _id: id });
     
-    //Valida que exista un workSpaceValido registrado para este usuario
-    //const userInWorkspace = new UserFindWorkspace()
-    //const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
+    // //Valida que exista un workSpaceValido registrado para este usuario
+    // //const userInWorkspace = new UserFindWorkspace()
+    // //const {index} = userInWorkspace.validateExistOrFail({ authDoc, workSpaceDoc});
 
 
-    this.res.status(200).json({ success: true });
+    // this.res.status(200).json({ success: true });
   }
 }

@@ -14,6 +14,7 @@
       "@Commons/*": ["commons/*"],
       "@DB/*": ["database/*"],
       "@WorkSpace/*": ["modules/work.space/*"],
+      "@MicroWorkSpace/*": ["modules/work.space.micro/*"],
       "@Authentification/*": ["modules/authentification/*"],
       "@Role/*": ["modules/role/*"],
       "@Permission/*": ["modules/permission/*"],
